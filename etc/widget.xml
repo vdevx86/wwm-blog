@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © 2017 Walk with Magento
+ * See COPYING.txt for license details
+ */
+-->
+<!--
+/**
+ * Free integration between Magento 2 and WordPress
+ *
+ * @author Ovakimyan Vazgen <vdevx86job@gmail.com>
+ * @copyright 2017 Walk with Magento (http://wwm-integrations.in.ua)
+ * @license https://opensource.org/licenses/OSL-3.0 Open Software License ("OSL") v. 3.0
+ * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="wwm_blog_sidebar" class="Wwm\Blog\Block\Widget\Sidebar">
+        <label translate="true">WWM Blog Sidebar</label>
+        <description translate="true">WordPress Blog Sidebar</description>
+        <parameters>
+            <parameter name="sidebar_id" xsi:type="text" required="true" visible="true" sort_order="10">
+                <label translate="true">Sidebar ID</label>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

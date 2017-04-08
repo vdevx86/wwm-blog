@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2017 Walk with Magento
+ * See COPYING.txt for license details
+ */
+-->
+<!--
+/**
+ * Free integration between Magento 2 and WordPress
+ *
+ * @author Ovakimyan Vazgen <vdevx86job@gmail.com>
+ * @copyright 2017 Walk with Magento (http://wwm-integrations.in.ua)
+ * @license https://opensource.org/licenses/OSL-3.0 Open Software License ("OSL") v. 3.0
+ * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Wwm_Blog::css/blog.css"/>
+    </head>
+    <body>
+        <referenceBlock name="head.additional">
+            <block class="Wwm\Blog\Block\Header" name="wwm.blog.header" template="header.phtml" after="-"/>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Wwm\Blog\Block\Index" name="wwm.blog.index" template="index.phtml"/>
+        </referenceContainer>
+        <referenceContainer name="root">
+            <block class="Wwm\Blog\Block\Footer" name="wwm.blog.footer" template="footer.phtml" after="-"/>
+        </referenceContainer>
+    </body>
+</page>

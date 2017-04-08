@@ -1,0 +1,102 @@
+/**
+ * Copyright © 2017 Walk with Magento
+ * See COPYING.txt for license details
+ */
+
+/**
+ * Free integration between Magento 2 and WordPress
+ *
+ * @author Ovakimyan Vazgen <vdevx86job@gmail.com>
+ * @copyright 2017 Walk with Magento (http://wwm-integrations.in.ua)
+ * @license https://opensource.org/licenses/OSL-3.0 Open Software License ("OSL") v. 3.0
+ * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
+ */
+
+.noselect{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+
+#blog .post-items>.post-item{padding-bottom:2.5rem;border-bottom:1px solid #999}
+#blog .post-items>.post-item.first{margin-top:-2.5rem}
+
+#blog .post-title{font-weight:400}
+#blog.single .post-title{margin-top:0}
+
+#blog .post-links{padding-bottom:1rem;border-bottom:1px solid #999}
+#blog .post-meta{margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #999;overflow:hidden}
+#blog .avatar{float:left;margin:0 1.5rem 1rem 0;border-radius:100%}
+#blog .post-content{padding-top:1rem}
+#blog .post-content p{text-align:justify}
+
+#blog .post-content .alignleft{float:left;margin:0 1.5rem 0 0}
+#blog .post-content .alignright{float:right;margin:0 0 0 1.5rem}
+#blog .post-content .aligncenter{float:none;display:block;margin:0 auto 1rem}
+
+#blog .post-thumbnail{float:right;width:240px;margin:-1rem 0 1rem 1rem;padding:1rem 0 1rem 1rem;border-left:1px solid #999;border-bottom:1px solid #999;border-bottom-left-radius:3px}
+#blog .post-thumbnail figcaption{font-size:1.2rem;font-style:italic;text-align:right;line-height:1.4}
+
+#blog .navigation{margin:2rem 0 0;background:none}
+#blog .navigation-title{display:block;margin:0 0 1rem}
+
+#blog .nav-links>.page-numbers{float:left;margin-left:.5%;padding:.5rem 1.2rem;border:1px solid #ccc;border-radius:3px}
+#blog .nav-links>.page-numbers:first-child{margin-left:0}
+#blog .nav-links>a.page-numbers{color:#1979c3;border-color:#1979c3}
+#blog .nav-links>a.page-numbers:hover{color:#fff;border-color:#006bb4;background:#006bb4;text-decoration:none}
+
+#blog .nav-links>span{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+
+#blog .comment-respond{margin:3rem 0 0}
+#blog .comment-reply-title{margin:0 0 1rem;font-size:2rem;line-height:1}
+
+#blog .comment-form .fieldset{margin:0}
+#blog .comment-form .field{margin:0 0 1rem}
+#blog .comment-form .label{margin:0}
+#blog .comment-form span.required{color:#e02b27}
+#blog .comment-form .actions-toolbar{margin:2rem 0 0}
+#blog .comment-form .actions-toolbar .primary .action{line-height:1.2;border-radius:3px}
+
+#blog .commentlist .comment-notes{margin:0 0 1rem}
+#blog .commentlist .comment-form,
+#blog .commentlist .comment-form .field{margin:0 0 .5rem}
+#blog .commentlist .comment-form .actions-toolbar{margin:1.5rem 0 0}
+#blog .commentlist .comment-respond{margin:1.3rem 0 0;padding:1.3rem 0 0;border-top:1px solid #aaa}
+
+#blog .comments-title{margin:2rem 0;font-size:2rem}
+#blog .nocomments{display:block;margin:2rem 0}
+#blog .commentlist{padding:0}
+
+#blog #comments ol,
+#blog #comments ul{list-style:none}
+
+#blog #comments .comment-meta{margin:0 0 .5rem}
+#blog #comments .avatar{margin:.4rem 1rem 0 0;border-radius:0}
+#blog #comments .comment{margin:0;padding:1rem;border:1px solid #aaa;border-top:0 none}
+#blog #comments .children{margin:1rem 0 0;padding:0}
+#blog #comments .comment:first-child{border-top:1px solid #aaa}
+#blog #comments .comment-content>*:last-child{margin-bottom:0}
+#blog #comments .reply{margin:.5rem 0 0}
+
+#blog #loginform,
+#blog #loginform .field{margin:0 0 1rem}
+#blog #loginform .label,
+#blog #loginform .choice *{cursor:pointer}
+
+.widget-blog{position:relative}
+
+.widget-blog ul,
+.widget-blog ol{margin:0;padding:0;list-style:none}
+.widget-blog li{margin:0}
+.widget-blog.widget_meta abbr[title]{border:0 none;cursor:pointer}
+.widget-blog.widget_search .fieldset{margin:0 0 1rem}
+.widget-blog.widget_search label{cursor:pointer}
+.widget-blog.widget_nav_menu ul{padding-left:1.8rem;list-style:disc outside none}
+
+.widget-blog.widget_calendar th,
+.widget-blog.widget_calendar td{padding:0}
+.widget-blog.widget_calendar thead th,
+.widget-blog.widget_calendar tbody td{text-align:center}
+.widget-blog.widget_calendar tbody td{border-bottom:1px solid #c2c2c2}
+.widget-blog.widget_calendar tbody tr:first-child td{border-top:1px solid #c2c2c2}
+.widget-blog.widget_calendar tfoot td{padding-top:1rem}
+.widget-blog.widget_calendar tfoot td:last-child{text-align:right}
+
+.widget-blog.widget_archive label,
+.widget-blog.widget_categories label{position:absolute;top:0;right:0;width:1px;height:1px;overflow:hidden}

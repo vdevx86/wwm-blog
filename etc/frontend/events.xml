@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2017 Walk with Magento
+ * See COPYING.txt for license details
+ */
+-->
+<!--
+/**
+ * Free integration between Magento 2 and WordPress
+ *
+ * @author Ovakimyan Vazgen <vdevx86job@gmail.com>
+ * @copyright 2017 Walk with Magento (http://wwm-integrations.in.ua)
+ * @license https://opensource.org/licenses/OSL-3.0 Open Software License ("OSL") v. 3.0
+ * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="page_block_html_topmenu_gethtml_before">
+        <observer name="wwm_blog_page_block_html_topmenu_gethtml_before" instance="Wwm\Blog\Observer\Page\AddBlogLink"/>
+    </event>
+</config>
