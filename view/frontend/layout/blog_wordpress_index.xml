@@ -21,13 +21,13 @@
     </head>
     <body>
         <referenceBlock name="head.additional">
-            <block class="Wwm\Blog\Block\Header" name="wwm.blog.header" template="header.phtml" after="-"/>
+            <block class="Wwm\Blog\Block\Header" name="wwm.blog.header" template="header.phtml" after="-" cacheable="false"/>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="Wwm\Blog\Block\Index" name="wwm.blog.index" template="index.phtml"/>
+            <block class="Wwm\Blog\Block\Index" name="wwm.blog.index" template="index.phtml" cacheable="false"/>
         </referenceContainer>
         <referenceContainer name="root">
-            <block class="Wwm\Blog\Block\Footer" name="wwm.blog.footer" template="footer.phtml" after="-"/>
+            <block class="Wwm\Blog\Block\Footer" name="wwm.blog.footer" template="footer.phtml" after="-" cacheable="false"/>
         </referenceContainer>
     </body>
 </page>
