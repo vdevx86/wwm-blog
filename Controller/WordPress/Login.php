@@ -17,15 +17,31 @@ namespace Wwm\Blog\Controller\WordPress;
 
 use Wwm\Blog\Controller\Router;
 
-class Login extends AbstractAction
+class Login extends \Magento\Framework\App\Action\Action
 {
+    
+    protected $context;
+    protected $forwardFactory;
+    protected $wp;
+    
+    public function __construct(
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\Controller\Result\ForwardFactory $forwardFactory,
+        \Wwm\Blog\Cms\WordPress $wp
+    ) {
+        $this->context = $context;
+        $this->forwardFactory = $forwardFactory;
+        $this->wp = $wp;
+        parent::__construct($context);
+    }
     
     public function execute()
     {
         try {
-            $this->getWordPress()->load($this->getRouterParameter(), Router::LT_LOGIN);
+            $this->wp->load($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false), Router::LT_LOGIN);
         } catch (\Exception $e) {
-            return $this->_forwardNoRoute($e->getMessage());
+            $this->context->getMessageManager()->addError($e->getMessage());
+            return $this->forwardFactory->create()->forward('noroute');
         }
     }
     

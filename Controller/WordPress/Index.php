@@ -15,17 +15,46 @@
 
 namespace Wwm\Blog\Controller\WordPress;
 
-class Index extends AbstractAction
+use Wwm\Blog\Controller\Router;
+
+class Index extends \Magento\Framework\App\Action\Action
 {
+    
+    protected $context;
+    protected $forwardFactory;
+    protected $wp;
+    protected $resultPageFactory;
+    
+    public function __construct(
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\Controller\Result\ForwardFactory $forwardFactory,
+        \Wwm\Blog\Cms\WordPress $wp,
+        \Wwm\Blog\Magento\Framework\View\Result\PageFactory $resultPageFactory
+    ) {
+        $this->context = $context;
+        $this->forwardFactory = $forwardFactory;
+        $this->wp = $wp;
+        $this->resultPageFactory = $resultPageFactory;
+        parent::__construct($context);
+    }
     
     public function execute()
     {
+        
         try {
-            $this->getWordPress()->load($this->getRouterParameter());
-            $this->getView()->loadLayout()->renderLayout();
+            
+            $this->wp->load($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false));
+            
+            $page = $this->resultPageFactory->create();
+            $page->addDefaultHandle();
+            
+            return $page;
+            
         } catch (\Exception $e) {
-            return $this->_forwardNoRoute($e->getMessage());
+            $this->context->getMessageManager()->addError($e->getMessage());
+            return $this->forwardFactory->create()->forward('noroute');
         }
+        
     }
     
 }
