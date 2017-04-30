@@ -13,50 +13,31 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Wwm\Blog\Cms\WordPress;
 
 final class Theme extends \WWMT
 {
     
-    protected $_context;
+    protected $context;
     
-    protected $_homeURL = null;
-    protected $_homeURLNew = null;
+    protected $homeURL = null;
+    protected $homeURLNew = null;
     
     public function __construct(
         \Magento\Framework\App\Action\Context $context
     ) {
         parent::__construct();
-        $this->_context = $context;
-        
+        $this->context = $context;
     }
     
-    public function getContext()
-    {
-        return $this->_context;
-    }
+    public function getContext() { return $this->context; }
     
-    public function getHomeURL()
-    {
-        return $this->_homeURL;
-    }
-    
-    public function setHomeURL($homeURL)
-    {
-        $this->_homeURL = $homeURL;
-        return $this;
-    }
-    
-    public function getHomeURLNew()
-    {
-        return $this->_homeURLNew;
-    }
-    
-    public function setHomeURLNew($homeURLNew)
-    {
-        $this->_homeURLNew = $homeURLNew;
-        return $this;
-    }
+    public function getHomeURL() { return $this->homeURL; }
+    public function setHomeURL($homeURL) { $this->homeURL = $homeURL; return $this; }
+    public function getHomeURLNew() { return $this->homeURLNew; }
+    public function setHomeURLNew($homeURLNew) { $this->homeURLNew = $homeURLNew; return $this; }
     
     public function includeTemplateLoader()
     {

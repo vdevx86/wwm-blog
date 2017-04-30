@@ -15,12 +15,11 @@
 
 namespace Wwm\Blog\Observer\Page;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Data\Tree\Node;
 use Wwm\Blog\Helper\Config;
 
-class AddBlogLink implements ObserverInterface
+class AddBlogLink implements \Magento\Framework\Event\ObserverInterface
 {
     
     protected $config;
@@ -31,22 +30,16 @@ class AddBlogLink implements ObserverInterface
         $this->config = $config;
     }
     
-    public function getConfig()
-    {
-        return $this->config;
-    }
-    
     public function execute(Observer $observer)
     {
         
-        $config = $this->getConfig();
-        if ($config->isMainMenuAdd()) {
+        if ($this->config->isMainMenuAdd()) {
             
             $menu = $observer->getMenu();
             $menu->addChild(new Node([
-                'name' => __($config->getMainMenuTitle()),
+                'name' => __($this->config->getMainMenuTitle()),
                 'id' => Config::XML_PATH_MAINMENU_ADD,
-                'url' => $config->getBaseUrl(),
+                'url' => $this->config->getBaseUrl(),
                 'has_active' => false,
                 'is_active' => false
             ], 'id', $menu->getTree(), $menu));

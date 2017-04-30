@@ -13,239 +13,176 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Wwm\Blog\Cms;
 
-use Wwm\Blog\Cms\WordPress\Theme;
-use Wwm\Blog\Cms\WordPress\FileSystem;
-use Wwm\Blog\Cms\WordPress\FileSystem\File\Patch;
-use Wwm\Blog\Cms\WordPress\FileSystem\Directory;
 use Wwm\Blog\Controller\Router;
+use Magento\Framework\HTTP\ZendClient as HTTPClient;
 
-class WordPress
+final class WordPress
 {
     
     const FLAG_STATUS = 'WWM_LOADED';
-    const WP_HOMEURL = 'WWM_URL_HOME';
-    const WP_HOMEURL_NEW = 'WWM_URL_HOME_NEW';
-    
-    // Supported request methods
-    const RM_GET = 'GET';
-    const RM_POST = 'POST';
-    
     const FILTER_INIT = 'muplugins_loaded';
     
-    const MSG_NOT_COMPATIBLE = 'Selected WordPress theme is not compatible with Magento 2';
+    protected $context;
+    protected $config;
+    protected $fileSystem;
+    protected $patch;
     
-    protected $_context;
-    protected $_objectManager;
-    protected $_config;
-    protected $_fileSystem;
-    protected $_patch;
-    
-    protected $_theme = null;
-    protected $_result = null;
-    protected $_routerType = null;
+    protected $theme = null;
+    protected $result = null;
     
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Wwm\Blog\Helper\Config $config,
-        FileSystem $fileSystem,
-        Patch $patch
+        WordPress\FileSystem $fileSystem,
+        WordPress\FileSystem\File\Patch $patch
     ) {
-        $this->_context = $context;
-        $this->_objectManager = $context->getObjectManager();
-        $this->_config = $config;
-        $this->_fileSystem = $fileSystem;
-        $this->_patch = $patch;
+        $this->context = $context;
+        $this->config = $config;
+        $this->fileSystem = $fileSystem;
+        $this->patch = $patch;
     }
     
-    public function getContext()
+    public function getTheme() { return $this->theme; }
+    public function getQueryResult() { return $this->result; }
+    
+    public function load($query = false, $type = Router::LT_DEFAULT)
     {
-        return $this->_context;
-    }
-    
-    public function getObjectManager()
-    {
-        return $this->_objectManager;
-    }
-    
-    public function getConfig()
-    {
-        return $this->_config;
-    }
-    
-    public function getComponentRegistry()
-    {
-        return $this->_componentRegistry;
-    }
-    
-    public function getFileSystem()
-    {
-        return $this->_fileSystem->load();
-    }
-    
-    public function getPatch()
-    {
-        return $this->_patch;
-    }
-    
-    public function getTheme()
-    {
-        return $this->_theme;
-    }
-    
-    public function getQueryResult()
-    {
-        return $this->_result;
-    }
-    
-    public function getRouterType()
-    {
-        return $this->_routerType;
-    }
-    
-    public function setRouterType($routerType)
-    {
-        $this->_routerType = $routerType;
-        return $this;
-    }
-    
-    public function load(
-        $query = false,
-        $type = Router::LT_DEFAULT
-    ) {
         
-        if ($this->isLoaded()) {
-            return $this;
-        }
+        $result = false;
         
-        $fileSystem = $this->getFileSystem();
-        $patch = $this->getPatch();
-        
-        if ($file = $patch->getPatchedFile(Patch::PT_CONFIG)) {
-            define('ABSPATH', $fileSystem->getInstallationPath());
-            eval($file);
-            if ($file = $patch->getPatchedFile(Patch::PT_TRANSLATIONS)) {
+        if (!$this->isLoaded()) {
+            
+            $fileSystem = $this->fileSystem->load();
+            $patch =& $this->patch;
+            
+            if ($file = $patch->getPatchedFile($patch::PT_CONFIG)) {
+                define('ABSPATH', $fileSystem->getInstallationPath());
                 eval($file);
-                if ($file = $patch->getPatchedFile(Patch::PT_SETTINGS)) {
-                    
-                    list($server, $get, $post) = [$_SERVER, $_GET, $_POST];
-                    
-                    $requestMethod =& $_SERVER['REQUEST_METHOD'];
-                    $scriptFilename =& $_SERVER['SCRIPT_FILENAME'];
-                    $scriptFilename = $fileSystem->getInstallationPath();
-                    $scriptName =& $_SERVER['SCRIPT_NAME'];
-                    $scriptName = DIRECTORY_SEPARATOR;
-                    $requestURI =& $_SERVER['REQUEST_URI'];
-                    $requestURI = DIRECTORY_SEPARATOR . $this->getConfig()->getInstallationPath() . DIRECTORY_SEPARATOR;
-                    $phpSelf =& $_SERVER['PHP_SELF'];
-                    $phpSelf = $requestURI;
-                    $queryString =& $_SERVER['QUERY_STRING'];
-                    
-                    if ($query) {
-                        $requestURI .= $query;
-                        $queryString = parse_url($query, PHP_URL_QUERY);
-                        parse_str($queryString, $_GET);
-                    } else {
-                        $queryString = '';
-                        $_GET = [];
-                    }
-                    
-                    switch ($type) {
-                        case Router::LT_LOGIN:
-                            $requestMethod = static::RM_POST;
-                            $scriptFilename .= FileSystem::FN_LOGIN;
-                            $scriptName .= FileSystem::FN_LOGIN;
-                            $phpSelf .= FileSystem::FN_LOGIN;
-                            break;
-                        default:
-                            $requestMethod = static::RM_GET;
-                            $scriptFilename .= FileSystem::FN_INDEX;
-                            $scriptName .= FileSystem::FN_INDEX;
-                            $phpSelf .= FileSystem::FN_INDEX;
-                    }
-                    
-                    $scriptFilename .= FileSystem::FN_EXT;
-                    $scriptName .= FileSystem::FN_EXT;
-                    $phpSelf .= FileSystem::FN_EXT;
-                    
-                    unset($query, $_SERVER['REDIRECT_URL'], $_SERVER['REDIRECT_QUERY_STRING']);
-                    
-                    $buildClassTheme = function () use ($type) {
+                if ($file = $patch->getPatchedFile($patch::PT_TRANSLATIONS)) {
+                    eval($file);
+                    if ($file = $patch->getPatchedFile($patch::PT_SETTINGS)) {
                         
-                        $classFile = get_template_directory() . DIRECTORY_SEPARATOR . FileSystem::FN_CLASS . FileSystem::FN_EXT;
+                        list($server, $get, $post) = [$_SERVER, $_GET, $_POST];
                         
-                        if (!FileSystem::validateFile($classFile)) {
-                            throw new \Exception(__(static::MSG_NOT_COMPATIBLE));
+                        $requestMethod =& $_SERVER['REQUEST_METHOD'];
+                        
+                        $scriptFilename =& $_SERVER['SCRIPT_FILENAME'];
+                        $scriptFilename = $fileSystem->getInstallationPath();
+                        
+                        $scriptName =& $_SERVER['SCRIPT_NAME'];
+                        $scriptName = DIRECTORY_SEPARATOR;
+                        
+                        $requestURI =& $_SERVER['REQUEST_URI'];
+                        $requestURI = DIRECTORY_SEPARATOR . $this->config->getInstallationPath() . DIRECTORY_SEPARATOR;
+                        
+                        $phpSelf =& $_SERVER['PHP_SELF'];
+                        $phpSelf = $requestURI;
+                        
+                        $queryString =& $_SERVER['QUERY_STRING'];
+                        
+                        if ($query) {
+                            $requestURI .= $query;
+                            $queryString = parse_url($query, PHP_URL_QUERY);
+                            parse_str($queryString, $_GET);
+                        } else {
+                            $queryString = '';
+                            $_GET = [];
                         }
-                        
-                        require $classFile;
-                        
-                        if (!class_exists('WWMT')) {
-                            throw new \Exception(__(static::MSG_NOT_COMPATIBLE));
-                        }
-                        
-                        $config = $this->getConfig();
-                        
-                        global $theme;
-                        $theme = $this->_theme = $this->getObjectManager()->create(Theme::class);
-                        $theme->setHomeURL($theme::homeUrl())
-                            ->setHomeURLNew($config->getBaseUrlFrontend() . $config->getRouteName());
                         
                         switch ($type) {
                             case Router::LT_LOGIN:
-                                $theme->enableScriptFilters();
+                                $requestMethod = HTTPClient::POST;
+                                $scriptFilename .= $fileSystem::FN_LOGIN;
+                                $scriptName .= $fileSystem::FN_LOGIN;
+                                $phpSelf .= $fileSystem::FN_LOGIN;
                                 break;
                             default:
-                                define('WP_USE_THEMES', true);
-                                $theme->enableGlobalFilters();
+                                $requestMethod = HTTPClient::GET;
+                                $scriptFilename .= $fileSystem::FN_INDEX;
+                                $scriptName .= $fileSystem::FN_INDEX;
+                                $phpSelf .= $fileSystem::FN_INDEX;
                         }
                         
-                    };
-                    
-                    require_once ABSPATH . FileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR . FileSystem::FN_PLUGIN . FileSystem::FN_EXT;
-                    add_filter(static::FILTER_INIT, $buildClassTheme, 10, 0);
-                    
-                    eval($file);
-                    
-                    remove_filter(static::FILTER_INIT, $buildClassTheme);
-                    unset($buildClassTheme);
-                    
-                    switch ($type) {
+                        $scriptFilename .= $fileSystem::FN_EXT;
+                        $scriptName .= $fileSystem::FN_EXT;
+                        $phpSelf .= $fileSystem::FN_EXT;
                         
-                        case Router::LT_LOGIN:
+                        unset($query, $_SERVER['REDIRECT_URL'], $_SERVER['REDIRECT_QUERY_STRING']);
+                        
+                        $buildClassTheme = function () use ($type, $fileSystem) {
                             
-                            if ($file = $patch->getPatchedFile(Patch::PT_LOGIN)) {
-                                eval($file);
+                            $classFile = get_template_directory() . DIRECTORY_SEPARATOR .
+                                $fileSystem::FN_CLASS . $fileSystem::FN_EXT;
+                            
+                            if (!$fileSystem->validateFile($classFile)) {
+                                throw new \Exception(__('Selected WordPress theme is not compatible with Magento 2'));
                             }
                             
-                            break;
+                            require $classFile;
                             
-                        default:
+                            if (!class_exists('WWMT')) {
+                                throw new \Exception(__('Selected WordPress theme is not compatible with Magento 2'));
+                            }
+                            
+                            global $theme;
+                            $theme = $this->theme = $this->context->getObjectManager()->create(WordPress\Theme::class);
+                            $theme->setHomeURL($theme::homeUrl())->setHomeURLNew(
+                                $this->config->getBaseUrlFrontend() . $this->config->getRouteName()
+                            );
+                            
+                            if ($type == Router::LT_LOGIN) {
+                                $theme->enableScriptFilters();
+                            } else {
+                                define('WP_USE_THEMES', true);
+                                $theme->enableGlobalFilters();
+                            }
+                            
+                        };
+                        
+                        require_once ABSPATH . $fileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR .
+                            $fileSystem::FN_PLUGIN . $fileSystem::FN_EXT;
+                        
+                        add_filter(static::FILTER_INIT, $buildClassTheme, 10, 0);
+                        eval($file);
+                        remove_filter(static::FILTER_INIT, $buildClassTheme);
+                        unset($buildClassTheme);
+                        
+                        if ($type == Router::LT_LOGIN) {
+                            if ($file = $patch->getPatchedFile($patch::PT_LOGIN)) {
+                                eval($file);
+                            }
+                        } else {
                             
                             define(static::FLAG_STATUS, true);
                             
                             ob_start();
                             wp();
                             
-                            $this->getTheme()
-                                ->enableLateGlobalFilters()
-                                ->includeTemplateLoader();
+                            $this->theme->enableLateGlobalFilters()->includeTemplateLoader();
+                            $this->result = ob_get_contents();
                             
-                            $this->_result = ob_get_contents();
                             ob_end_clean();
                             
+                        }
+                        
+                        list($_SERVER, $_GET, $_POST) = [$server, $get, $post];
+                        $result = $this;
+                        
                     }
-                    
-                    list($_SERVER, $_GET, $_POST) = [$server, $get, $post];
-                    return $this;
-                    
                 }
             }
+            
+            if (!$result) {
+                define(static::FLAG_STATUS, false);
+            }
+            
         }
         
-        define(static::FLAG_STATUS, false);
-        return false;
+        return $result;
         
     }
     
@@ -257,13 +194,6 @@ class WordPress
     public static function isLoadedSuccessfully()
     {
         return static::isLoaded() && constant(static::FLAG_STATUS);
-    }
-    
-    public static function checkLoadStatus()
-    {
-        if (!static::isLoadedSuccessfully()) {
-            throw new Exception(__('WordPress environment not initialized'));
-        }
     }
     
 }

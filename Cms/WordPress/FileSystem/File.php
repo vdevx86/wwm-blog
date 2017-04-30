@@ -15,6 +15,7 @@
 
 namespace Wwm\Blog\Cms\WordPress\FileSystem;
 
+use Magento\Framework\Exception\FileSystemException;
 use Wwm\Blog\Cms\WordPress\FileSystem;
 
 class File
@@ -22,17 +23,15 @@ class File
     
     const FNPART_PHPTAG = '<?php';
     
-    protected $_fileSystem;
+    protected $fileSystem;
+    protected $driverFile;
     
     public function __construct(
-        FileSystem $fileSystem
+        FileSystem $fileSystem,
+        \Magento\Framework\Filesystem\Driver\File $driverFile
     ) {
-        $this->_fileSystem = $fileSystem;
-    }
-    
-    public function getFileSystem()
-    {
-        return $this->_fileSystem->load();
+        $this->fileSystem = $fileSystem;
+        $this->driverFile = $driverFile;
     }
     
     public static function removePhpTag($content)
@@ -52,16 +51,16 @@ class File
     public function readPhpFile($fileName)
     {
         
-        $fileSystem = $this->getFileSystem();
-        
         $fileName .= FileSystem::FN_EXT;
-        $content = @file_get_contents($fileSystem->getInstallationPath() . $fileName);
+        $content = $this->driverFile->fileGetContents(
+            $this->fileSystem->load()->getInstallationPath() . $fileName
+        );
         
         if (!$content) {
             throw new FileSystemException(__('Error reading WordPress file: %1', $fileName));
         }
         
-        return $this->removePhpTag($content);
+        return static::removePhpTag($content);
         
     }
     

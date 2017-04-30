@@ -37,12 +37,18 @@ class Login extends \Magento\Framework\App\Action\Action
     
     public function execute()
     {
+        
+        $result = null;
+        
         try {
             $this->wp->load($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false), Router::LT_LOGIN);
         } catch (\Exception $e) {
             $this->context->getMessageManager()->addError($e->getMessage());
-            return $this->forwardFactory->create()->forward('noroute');
+            $result = $this->forwardFactory->create()->forward('noroute');
         }
+        
+        return $result;
+        
     }
     
 }

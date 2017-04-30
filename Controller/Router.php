@@ -15,8 +15,6 @@
 
 namespace Wwm\Blog\Controller;
 
-use Wwm\Blog\Cms\WordPress\FileSystem;
-
 class Router implements \Magento\Framework\App\RouterInterface
 {
     
@@ -35,37 +33,29 @@ class Router implements \Magento\Framework\App\RouterInterface
     const LT_DEFAULT = 0;
     const LT_LOGIN = 1;
     
-    protected $_actionFactory;
-    protected $_config;
+    protected $actionFactory;
+    protected $config;
     
     public function __construct(
         \Magento\Framework\App\ActionFactory $actionFactory,
         \Wwm\Blog\Helper\Config $config
     ) {
-        $this->_actionFactory = $actionFactory;
-        $this->_config = $config;
-    }
-    
-    public function getActionFactory()
-    {
-        return $this->_actionFactory;
-    }
-    
-    public function getConfig()
-    {
-        return $this->_config;
+        $this->actionFactory = $actionFactory;
+        $this->config = $config;
     }
     
     public function recognizeLoadType($query)
     {
+        
+        $result = static::LT_DEFAULT;
         
         if ($query) {
             if ($path = parse_url($query, PHP_URL_PATH)) {
                 if ($path = explode(static::URI_DELIMITER, $path)) {
                     if ($scriptName = array_pop($path)) {
                         
-                        if ($scriptName == FileSystem::FN_LOGIN . FileSystem::FN_EXT) {
-                            return static::LT_LOGIN;
+                        if ($scriptName == WordPress\FileSystem::FN_LOGIN . WordPress\FileSystem::FN_EXT) {
+                            $result = static::LT_LOGIN;
                         }
                         
                     }
@@ -73,22 +63,22 @@ class Router implements \Magento\Framework\App\RouterInterface
             }
         }
         
-        return static::LT_DEFAULT;
+        return $result;
         
     }
     
     public function match(\Magento\Framework\App\RequestInterface $request)
     {
         
-        $config = $this->getConfig();
+        $result = false;
         
-        if ($config->isModuleEnabled()) {
+        if ($this->config->isModuleEnabled()) {
             if ($requestURI = ltrim($request->getRequestUri(), static::URI_DELIMITER)) {
                 $requestURI = explode(static::URI_DELIMITER, $requestURI, 2);
                 if (
                         is_array($requestURI)
                     &&  count($requestURI) > 0
-                    &&  $requestURI[0] == $config->getRouteName()
+                    &&  $requestURI[0] == $this->config->getRouteName()
                 ) {
                     
                     if (!isset($requestURI[1])) {
@@ -107,17 +97,16 @@ class Router implements \Magento\Framework\App\RouterInterface
                             $request->setActionName(static::ROUTER_ACTION_DEFAULT);
                     }
                     
-                    return $this->getActionFactory()
-                        ->create(
-                            \Magento\Framework\App\Action\Forward::class,
-                            ['request' => $request]
-                        );
+                    $result = $this->actionFactory->create(
+                        \Magento\Framework\App\Action\Forward::class,
+                        ['request' => $request]
+                    );
                     
                 }
             }
         }
         
-        return false;
+        return $result;
         
     }
     

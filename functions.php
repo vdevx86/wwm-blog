@@ -13,6 +13,8 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
+// @codingStandardsIgnoreFile
+
 function __(...$argc)
 {
     

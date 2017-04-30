@@ -30,79 +30,68 @@ class Config
     
     const MAINMENU_TITLE_DEFAULT = 'Blog';
     
-    protected $_scopeConfig;
-    protected $_storeManager;
+    protected $scopeConfig;
+    protected $storeManager;
     
-    protected $_installationPath = null;
-    protected $_routeName = null;
-    protected $_baseUrl = null;
+    protected $installationPath = null;
+    protected $routeName = null;
+    protected $baseUrl = null;
     
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManager $storeManager
     ) {
-        $this->_scopeConfig = $scopeConfig;
-        $this->_storeManager = $storeManager;
-    }
-    
-    public function getScopeConfig()
-    {
-        return $this->_scopeConfig;
-    }
-    
-    public function getStoreManager()
-    {
-        return $this->_storeManager;
+        $this->scopeConfig = $scopeConfig;
+        $this->storeManager = $storeManager;
     }
     
     public function isModuleEnabled()
     {
-        return $this->getScopeConfig()->getValue(static::XML_PATH_STATUS);
+        return $this->scopeConfig->getValue(static::XML_PATH_STATUS);
     }
     
     public function getInstallationPath()
     {
-        if ($this->_installationPath === null) {
-            $this->_installationPath = $this->getScopeConfig()->getValue(static::XML_PATH_INSTALLATION_PATH);
+        if ($this->installationPath === null) {
+            $this->installationPath = $this->scopeConfig->getValue(static::XML_PATH_INSTALLATION_PATH);
         }
-        return $this->_installationPath;
+        return $this->installationPath;
     }
     
     public function getRouteName()
     {
-        if ($this->_routeName === null) {
-            $routeName = $this->getScopeConfig()->getValue(static::XML_PATH_ROUTE_NAME);
+        if ($this->routeName === null) {
+            $routeName = $this->scopeConfig->getValue(static::XML_PATH_ROUTE_NAME);
             if (!$routeName) {
                 $routeName = Router::ROUTER_NAME_DEFAULT;
             }
-            $this->_routeName = $routeName;
+            $this->routeName = $routeName;
         }
-        return $this->_routeName;
+        return $this->routeName;
     }
     
     public function getBaseUrlFrontend()
     {
-        return $this->getStoreManager()
-            ->getStore()
+        return $this->storeManager->getStore()
             ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_LINK);
     }
     
     public function getBaseUrl()
     {
-        if ($this->_baseUrl === null) {
-            $this->_baseUrl = $this->getBaseUrlFrontend() . $this->getRouteName() . Router::URI_DELIMITER;
+        if ($this->baseUrl === null) {
+            $this->baseUrl = $this->getBaseUrlFrontend() . $this->getRouteName() . Router::URI_DELIMITER;
         }
-        return $this->_baseUrl;
+        return $this->baseUrl;
     }
     
     public function isMainMenuAdd()
     {
-        return $this->getScopeConfig()->getValue(static::XML_PATH_MAINMENU_ADD, ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->getValue(static::XML_PATH_MAINMENU_ADD, ScopeInterface::SCOPE_STORE);
     }
     
     public function getMainMenuTitle()
     {
-        $title = $this->getScopeConfig()->getValue(static::XML_PATH_MAINMENU_TITLE, ScopeInterface::SCOPE_STORE);
+        $title = $this->scopeConfig->getValue(static::XML_PATH_MAINMENU_TITLE, ScopeInterface::SCOPE_STORE);
         if (!$title) {
             $title = static::MAINMENU_TITLE_DEFAULT;
         }

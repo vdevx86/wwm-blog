@@ -18,40 +18,20 @@ namespace Wwm\Blog\Block;
 class Index extends \Magento\Framework\View\Element\Template
 {
     
-    protected $_wp;
-    protected $_theme;
+    protected $wp;
     
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Wwm\Blog\Cms\WordPress $wp,
-        \Wwm\Blog\Cms\WordPress\Theme $theme,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->_wp = $wp;
-        $this->_theme = $theme;
-    }
-    
-    public function getTheme()
-    {
-        return $this->_theme;
-    }
-    
-    protected function _prepareLayout()
-    {
-        $theme = $this->getTheme();
-        $this->pageConfig->getTitle()->set($theme::wpGetDocumentTitle());
-        return parent::_prepareLayout();
-    }
-    
-    public function getWordPress()
-    {
-        return $this->_wp;
+        $this->wp = $wp;
     }
     
     public function getQueryResult()
     {
-        return $this->getWordPress()->getQueryResult();
+        return $this->wp->getQueryResult();
     }
     
 }

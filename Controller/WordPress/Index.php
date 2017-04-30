@@ -41,19 +41,20 @@ class Index extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         
+        $result = false;
+        
         try {
-            
             $this->wp->load($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false));
-            
-            $page = $this->resultPageFactory->create();
-            $page->addDefaultHandle();
-            
-            return $page;
-            
+            $result = $this->resultPageFactory->create()->addDefaultHandle();
         } catch (\Exception $e) {
             $this->context->getMessageManager()->addError($e->getMessage());
-            return $this->forwardFactory->create()->forward('noroute');
         }
+        
+        if (!$result) {
+            $result = $this->forwardFactory->create()->forward('noroute');
+        }
+        
+        return $result;
         
     }
     
