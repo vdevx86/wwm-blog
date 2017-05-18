@@ -15,7 +15,6 @@ At this moment these system requirements in some points are pretty similar (but,
 You have to install WordPress in the same directory as where you have installed Magento 2.
 
 ## Linked resources
-* [Here](https://github.com/vdevx86/wwm-theme) you will find the WordPress theme, which makes the installation possible
 * [A few screenshots](http://wwm-integrations.in.ua/screenshots.html) of integration for the basic Magento 2 Luma theme on this pretty tiny static [official website](http://wwm-integrations.in.ua/)
 
 ## How to Install and Configure
@@ -26,13 +25,13 @@ After WordPress setup you may live the installation directory name as is (wordpr
 
 Place the Magento 2 extension into this directory: _app/code/Wwm/Blog_. Create last two directories manually. Then enable the extension. If you don't know how to enable it follow [this official guide](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-subcommands-enable.html#instgde-cli-subcommands-enable-disable). Don't forget about the Magento 2 cache – flush it if needed.
 
-Then place the WordPress theme into this directory: _wordpress/wp-content/themes/wwm_. Create the last directory manually. Then enable the theme. If you don't know how to enable it follow [this official guide](https://codex.wordpress.org/Using_Themes).
-
 Copy the "functions.php" file from the extension directory into the _app_ directory. Overwrite the old file. Don't worry, you can always get the original file from the [official repositiory](https://github.com/magento/magento2).
 
 Almost done. Login to the Magento 2 admin panel and go to:
 **Stores -> Configuration -> WWM -> WordPress Integration**
-
 Enter your WordPress installation directory name (I told you earlier to remember it) and other settings and press "Save Settings".
+
+Now try to visit your new blog page at least once. It will be probably broken or unavailable. This is because your WordPress theme wasn't activated yet.
+Go to the WordPress admin panel and enable the WordPress "wwm" theme. If you don't know how to enable it follow [this official guide](https://codex.wordpress.org/Using_Themes).
 
 That's it!
