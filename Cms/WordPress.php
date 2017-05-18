@@ -13,12 +13,15 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
+// @coding_Standards_IgnoreFile
 
 namespace Wwm\Blog\Cms;
 
 use Wwm\Blog\Controller\Router;
+use Wwm\Blog\Cms\WordPress\Theme;
+
 use Magento\Framework\HTTP\ZendClient as HTTPClient;
+use Magento\Framework\Exception\FileSystemException;
 
 final class WordPress
 {
@@ -30,6 +33,7 @@ final class WordPress
     protected $config;
     protected $fileSystem;
     protected $patch;
+    protected $composerFs;
     
     protected $theme = null;
     protected $result = null;
@@ -38,12 +42,14 @@ final class WordPress
         \Magento\Framework\App\Action\Context $context,
         \Wwm\Blog\Helper\Config $config,
         WordPress\FileSystem $fileSystem,
-        WordPress\FileSystem\File\Patch $patch
+        WordPress\FileSystem\File\Patch $patch,
+        \Composer\Util\Filesystem $composerFs
     ) {
         $this->context = $context;
         $this->config = $config;
         $this->fileSystem = $fileSystem;
         $this->patch = $patch;
+        $this->composerFs = $composerFs;
     }
     
     public function getTheme() { return $this->theme; }
@@ -93,18 +99,16 @@ final class WordPress
                             $_GET = [];
                         }
                         
-                        switch ($type) {
-                            case Router::LT_LOGIN:
-                                $requestMethod = HTTPClient::POST;
-                                $scriptFilename .= $fileSystem::FN_LOGIN;
-                                $scriptName .= $fileSystem::FN_LOGIN;
-                                $phpSelf .= $fileSystem::FN_LOGIN;
-                                break;
-                            default:
-                                $requestMethod = HTTPClient::GET;
-                                $scriptFilename .= $fileSystem::FN_INDEX;
-                                $scriptName .= $fileSystem::FN_INDEX;
-                                $phpSelf .= $fileSystem::FN_INDEX;
+                        if ($type == Router::LT_LOGIN) {
+                            $requestMethod = HTTPClient::POST;
+                            $scriptFilename .= $fileSystem::FN_LOGIN;
+                            $scriptName .= $fileSystem::FN_LOGIN;
+                            $phpSelf .= $fileSystem::FN_LOGIN;
+                        } else {
+                            $requestMethod = HTTPClient::GET;
+                            $scriptFilename .= $fileSystem::FN_INDEX;
+                            $scriptName .= $fileSystem::FN_INDEX;
+                            $phpSelf .= $fileSystem::FN_INDEX;
                         }
                         
                         $scriptFilename .= $fileSystem::FN_EXT;
@@ -115,21 +119,20 @@ final class WordPress
                         
                         $buildClassTheme = function () use ($type, $fileSystem) {
                             
-                            $classFile = get_template_directory() . DIRECTORY_SEPARATOR .
-                                $fileSystem::FN_CLASS . $fileSystem::FN_EXT;
-                            
-                            if (!$fileSystem->validateFile($classFile)) {
-                                throw new \Exception(__('Selected WordPress theme is not compatible with Magento 2'));
-                            }
-                            
-                            require $classFile;
-                            
-                            if (!class_exists('WWMT')) {
-                                throw new \Exception(__('Selected WordPress theme is not compatible with Magento 2'));
+                            $to = get_theme_root() . DIRECTORY_SEPARATOR . Theme::NAME;
+                            if (!$this->composerFs->isSymlinkedDirectory($to)) {
+                                $from = $fileSystem->getThemeDirectory();
+                                if (!$this->composerFs->relativeSymlink($from, $to)) {
+                                    throw new FileSystemException(__(
+                                        'Could not install WordPress theme. Error creating symlink: %1 => %2',
+                                        $from,
+                                        $to
+                                    ));
+                                }
                             }
                             
                             global $theme;
-                            $theme = $this->theme = $this->context->getObjectManager()->create(WordPress\Theme::class);
+                            $theme = $this->theme = $this->context->getObjectManager()->create(Theme::class);
                             $theme->setHomeURL($theme::homeUrl())->setHomeURLNew(
                                 $this->config->getBaseUrlFrontend() . $this->config->getRouteName()
                             );

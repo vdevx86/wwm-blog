@@ -15,6 +15,8 @@
 
 namespace Wwm\Blog\Controller;
 
+use Wwm\Blog\Cms\WordPress\FileSystem;
+
 class Router implements \Magento\Framework\App\RouterInterface
 {
     
@@ -54,7 +56,7 @@ class Router implements \Magento\Framework\App\RouterInterface
                 if ($path = explode(static::URI_DELIMITER, $path)) {
                     if ($scriptName = array_pop($path)) {
                         
-                        if ($scriptName == WordPress\FileSystem::FN_LOGIN . WordPress\FileSystem::FN_EXT) {
+                        if ($scriptName == FileSystem::FN_LOGIN . FileSystem::FN_EXT) {
                             $result = static::LT_LOGIN;
                         }
                         

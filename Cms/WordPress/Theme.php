@@ -17,8 +17,12 @@
 
 namespace Wwm\Blog\Cms\WordPress;
 
-final class Theme extends \WWMT
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'Theme' . DIRECTORY_SEPARATOR . 'Wwm.php';
+
+final class Theme extends \Wwm
 {
+    
+    const NAME = 'wwm';
     
     protected $context;
     
@@ -32,7 +36,10 @@ final class Theme extends \WWMT
         $this->context = $context;
     }
     
-    public function getContext() { return $this->context; }
+    public function getContext()
+    {
+        return $this->context;
+    }
     
     public function getHomeURL() { return $this->homeURL; }
     public function setHomeURL($homeURL) { $this->homeURL = $homeURL; return $this; }

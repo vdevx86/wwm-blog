@@ -15,6 +15,7 @@
 
 namespace Wwm\Blog\Cms\WordPress;
 
+use Magento\Framework\Module\Dir;
 use Magento\Framework\Exception\FileSystemException;
 
 class FileSystem
@@ -37,11 +38,9 @@ class FileSystem
     const FN_TRANSLATE = 'l10n';
     const FN_TPLDR = 'template-loader';
     
-    // Files from theme directory
-    const FN_CLASS = 'class';
-    
     protected $config;
     protected $driverFile;
+    protected $moduleReader;
     
     protected $loadStatus = false;
     protected $installationPath;
@@ -49,10 +48,12 @@ class FileSystem
     
     public function __construct(
         \Wwm\Blog\Helper\Config $config,
-        \Magento\Framework\Filesystem\Driver\File $driverFile
+        \Magento\Framework\Filesystem\Driver\File $driverFile,
+        \Magento\Framework\Module\Dir\Reader $moduleReader
     ) {
         $this->config = $config;
         $this->driverFile = $driverFile;
+        $this->moduleReader = $moduleReader;
     }
     
     public function getLoadStatus() { return $this->loadStatus; }
@@ -135,6 +136,14 @@ class FileSystem
         
         return $this;
         
+    }
+    
+    public function getThemeDirectory()
+    {
+        return $this->moduleReader->getModuleDir(Dir::MODULE_VIEW_DIR, 'Wwm_Blog')
+            . DIRECTORY_SEPARATOR . 'frontend'
+            . DIRECTORY_SEPARATOR . 'templates'
+            . DIRECTORY_SEPARATOR . 'theme';
     }
     
 }
