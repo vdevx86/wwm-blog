@@ -13,7 +13,7 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @coding_Standards_IgnoreFile
+// @codingStandardsIgnoreFile
 
 namespace Wwm\Blog\Cms;
 
@@ -117,11 +117,11 @@ final class WordPress
                         
                         unset($query, $_SERVER['REDIRECT_URL'], $_SERVER['REDIRECT_QUERY_STRING']);
                         
-                        $buildClassTheme = function () use ($type, $fileSystem) {
+                        $buildClassTheme = function () use ($type) {
                             
                             $to = get_theme_root() . DIRECTORY_SEPARATOR . Theme::NAME;
                             if (!$this->composerFs->isSymlinkedDirectory($to)) {
-                                $from = $fileSystem->getThemeDirectory();
+                                $from = $this->fileSystem->getThemeDirectory();
                                 if (!$this->composerFs->relativeSymlink($from, $to)) {
                                     throw new FileSystemException(__(
                                         'Could not install WordPress theme. Error creating symlink: %1 => %2',

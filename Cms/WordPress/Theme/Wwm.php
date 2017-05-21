@@ -15,6 +15,8 @@
 
 // @codingStandardsIgnoreFile
 
+namespace Wwm\Blog\Cms\WordPress\Theme;
+
 class Wwm
 {
     
@@ -51,7 +53,7 @@ class Wwm
     private $commentsAvailable = null;
     private $commentsNumber = null;
     
-    public static function getContents(Closure $function, array $params = [])
+    public static function getContents(\Closure $function, array $params = [])
     {
         
         ob_start();
@@ -69,7 +71,7 @@ class Wwm
         
     }
     
-    public static function addFilter($tag, Closure $function, $priority = null, $acceptedArgs = 1)
+    public static function addFilter($tag, \Closure $function, $priority = null, $acceptedArgs = 1)
     {
         
         if ($priority === null) {
@@ -201,7 +203,7 @@ class Wwm
         return $this->filtersStorageGlobal;
     }
     
-    public function setFiltersStorageGlobal(SplObjectStorage $filtersStorageGlobal = null)
+    public function setFiltersStorageGlobal(\SplObjectStorage $filtersStorageGlobal = null)
     {
         $this->filtersStorageGlobal = $filtersStorageGlobal;
         return $this;
@@ -665,7 +667,7 @@ class Wwm
     {
         
         if ($filtersStorage = $this->getFiltersStorageGlobal()) {
-            if ($filtersStorage instanceof SplObjectStorage) {
+            if ($filtersStorage instanceof \SplObjectStorage) {
                 if (count($filtersStorage) > 0) {
                     $filtersStorage->rewind();
                     while ($filtersStorage->valid()) {
@@ -735,7 +737,7 @@ class Wwm
         return $this->filtersStorageScript;
     }
     
-    public function setFiltersStorageScript(SplObjectStorage $filtersStorageScript = null)
+    public function setFiltersStorageScript(\SplObjectStorage $filtersStorageScript = null)
     {
         $this->filtersStorageScript = $filtersStorageScript;
         return $this;
@@ -1035,8 +1037,8 @@ class Wwm
     public function __construct()
     {
         
-        $this->filtersStorageGlobal = new SplObjectStorage;
-        $this->filtersStorageScript = new SplObjectStorage;
+        $this->filtersStorageGlobal = new \SplObjectStorage;
+        $this->filtersStorageScript = new \SplObjectStorage;
         
         global $wp_filter, $merged_filters;
         

@@ -17,12 +17,11 @@
 
 namespace Wwm\Blog\Cms\WordPress;
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'Theme' . DIRECTORY_SEPARATOR . 'Wwm.php';
-
-final class Theme extends \Wwm
+final class Theme extends \Wwm\Blog\Cms\WordPress\Theme\Wwm
 {
     
     const NAME = 'wwm';
+    const AREA_CODE = 'frontend';
     
     protected $context;
     
