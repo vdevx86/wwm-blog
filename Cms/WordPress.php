@@ -34,6 +34,7 @@ final class WordPress
     protected $fileSystem;
     protected $patch;
     protected $composerFs;
+    protected $themeLocator;
     
     protected $theme = null;
     protected $result = null;
@@ -43,13 +44,15 @@ final class WordPress
         \Wwm\Blog\Helper\Config $config,
         WordPress\FileSystem $fileSystem,
         WordPress\FileSystem\File\Patch $patch,
-        \Composer\Util\Filesystem $composerFs
+        \Composer\Util\Filesystem $composerFs,
+        \Wwm\Blog\Cms\WordPress\FileSystem\Theme\Locator $themeLocator
     ) {
         $this->context = $context;
         $this->config = $config;
         $this->fileSystem = $fileSystem;
         $this->patch = $patch;
         $this->composerFs = $composerFs;
+        $this->themeLocator = $themeLocator;
     }
     
     public function getTheme() { return $this->theme; }
@@ -121,7 +124,7 @@ final class WordPress
                             
                             $to = get_theme_root() . DIRECTORY_SEPARATOR . Theme::NAME;
                             if (!$this->composerFs->isSymlinkedDirectory($to)) {
-                                $from = $this->fileSystem->getThemeDirectory();
+                                $from = $this->themeLocator->getLocation();
                                 if (!$this->composerFs->relativeSymlink($from, $to)) {
                                     throw new FileSystemException(__(
                                         'Could not install WordPress theme. Error creating symlink: %1 => %2',
