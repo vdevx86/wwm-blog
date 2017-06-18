@@ -29,6 +29,13 @@ class Index extends \Magento\Framework\View\Element\Template
         $this->wp = $wp;
     }
     
+    protected function _prepareLayout()
+    {
+        $theme = $this->wp->getTheme();
+        $this->pageConfig->getTitle()->set($theme::wpGetDocumentTitle());
+        return parent::_prepareLayout();
+    }
+    
     public function getQueryResult()
     {
         return $this->wp->getQueryResult();

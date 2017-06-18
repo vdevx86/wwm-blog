@@ -13,24 +13,22 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Controller\WordPress;
+namespace Wwm\Blog\Controller\Adminhtml\System\Config;
 
-use Wwm\Blog\Controller\Router;
-
-class Login extends \Magento\Framework\App\Action\Action
+class ThemeInstall extends \Magento\Backend\App\Action
 {
     
     protected $context;
-    protected $forwardFactory;
+    protected $resultJsonFactory;
     protected $wp;
     
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Controller\Result\ForwardFactory $forwardFactory,
+        \Magento\Backend\App\Action\Context $context,
+        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Wwm\Blog\Cms\WordPress $wp
     ) {
         $this->context = $context;
-        $this->forwardFactory = $forwardFactory;
+        $this->resultJsonFactory = $resultJsonFactory;
         $this->wp = $wp;
         parent::__construct($context);
     }
@@ -38,20 +36,27 @@ class Login extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         
-        $result = null;
+        $result = false;
         
         try {
-            $this->wp->load($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false), Router::LT_LOGIN);
+            
+            $this->wp->setBootstrap(true)
+                ->load()
+                ->installTheme();
+            
+            $result = __('Theme installed successfully');
+            
         } catch (\Exception $e) {
-            
-            $this->context->getMessageManager()->addError($e->getMessage());
-            $this->getRequest()->setRequestUri('')->setDispatched(false);
-            
-            $result = $this->forwardFactory->create()->forward('noroute');
-            
+            $result = $e->getMessage();
         }
         
-        return $result;
+        if (!$result) {
+            $result = __('Unknown error');
+        }
+        
+        return $this->resultJsonFactory->create()->setData([
+            'message' => $result
+        ]);
         
     }
     

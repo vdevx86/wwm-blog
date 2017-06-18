@@ -35,10 +35,7 @@ final class Theme extends \Wwm\Blog\Cms\WordPress\Theme\Wwm
         $this->context = $context;
     }
     
-    public function getContext()
-    {
-        return $this->context;
-    }
+    public function getContext() { return $this->context; }
     
     public function getHomeURL() { return $this->homeURL; }
     public function setHomeURL($homeURL) { $this->homeURL = $homeURL; return $this; }

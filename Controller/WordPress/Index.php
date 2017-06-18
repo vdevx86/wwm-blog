@@ -51,6 +51,7 @@ class Index extends \Magento\Framework\App\Action\Action
         }
         
         if (!$result) {
+            $this->getRequest()->setRequestUri('')->setDispatched(false);
             $result = $this->forwardFactory->create()->forward('noroute');
         }
         

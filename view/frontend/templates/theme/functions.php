@@ -89,11 +89,8 @@ if (is_admin()) {
     
     function checkCompatibility()
     {
-        if (!defined('WWM_LOADED')) {
+        if (!defined('VENDOR_PATH')) {
             wp_die(__('This theme is not designed to run separately without Magento 2 environment'));
-        }
-        if (!WWM_LOADED) {
-            wp_die(__('WordPress unable to run inside Magento 2 environment because of incomplete initialization'));
         }
     }
     

@@ -1,0 +1,30 @@
+<script>
+require([
+    'underscore',
+    'Magento_Ui/js/modal/alert',
+    'prototype'
+], function (_, alert) {
+    function installWordPressTheme() {
+        var result;
+        new Ajax.Request("<?php echo $block->getAjaxUrl()?>", {
+            onSuccess: function(response) {
+                try {
+                    if (response.responseText.isJSON()) {
+                        response = response.responseText.evalJSON();
+                        result = response.message;
+                    }
+                } catch (e) { }
+            }.bind(this),
+            onComplete: function(response) {
+                if (!_.isString(result)) {
+                    result = "<?php echo __('Unknown error')?>";
+                }
+                alert({content: result});
+            }.bind(this)
+        });
+    };
+    window.installWordPressTheme = installWordPressTheme.bind(installWordPressTheme)
+})
+</script><?php
+
+echo $block->getButtonHtml();

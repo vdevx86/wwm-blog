@@ -91,12 +91,10 @@ class Router implements \Magento\Framework\App\RouterInterface
                         ->setControllerName(static::ROUTER_CONTROLLER)
                         ->setParam(static::ROUTER_PARAMETER, $requestURI[1]);
                     
-                    switch ($this->recognizeLoadType($requestURI[1])) {
-                        case static::LT_LOGIN:
-                            $request->setActionName(static::ROUTER_ACTION_LOGIN);
-                            break;
-                        default:
-                            $request->setActionName(static::ROUTER_ACTION_DEFAULT);
+                    if ($this->recognizeLoadType($requestURI[1]) == static::LT_LOGIN) {
+                        $request->setActionName(static::ROUTER_ACTION_LOGIN);
+                    } else {
+                        $request->setActionName(static::ROUTER_ACTION_DEFAULT);
                     }
                     
                     $result = $this->actionFactory->create(
