@@ -32,7 +32,7 @@ class Index extends \Magento\Framework\View\Element\Template
     protected function _prepareLayout()
     {
         $theme = $this->wp->getTheme();
-        $this->pageConfig->getTitle()->set($theme::wpGetDocumentTitle());
+        $this->pageConfig->getTitle()->set($theme->wpGetDocumentTitle());
         return parent::_prepareLayout();
     }
     

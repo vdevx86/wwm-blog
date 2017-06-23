@@ -63,14 +63,14 @@ if (is_admin()) {
             $objectManager = $bootstrap->getObjectManager();
             
             $state = $objectManager->get(\Magento\Framework\App\State::class);
-            $configLoader = $objectManager->get('Magento\Framework\ObjectManager\ConfigLoaderInterface');
+            $configLoader = $objectManager->get(\Magento\Framework\ObjectManager\ConfigLoaderInterface::class);
             
-            $areaCode = \Wwm\Blog\Cms\WordPress\Theme::AREA_CODE;
+            $areaCode = \Wwm\Blog\Cms\WordPress\ThemeInterface::AREA_CODE;
             $state->setAreaCode($areaCode);
             $objectManager->configure($configLoader->load($areaCode));
             
             global $theme;
-            $theme = $objectManager->get(\Wwm\Blog\Cms\WordPress\Theme::class);
+            $theme = $objectManager->get(\Wwm\Blog\Cms\WordPress\ThemeInterface::class);
             $theme->enableAdminGlobalFilters();
             
         };

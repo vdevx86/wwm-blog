@@ -1,21 +1,21 @@
-<?php checkCompatibility(); ?>
-<section id="blog" <?php self::bodyClass(); ?>>
-    <?php if (self::havePosts()): self::thePost(); ?>
-    <article id="post-<?php self::theId(); ?>" <?php self::postClass(); ?>>
+<?php checkCompatibility(); global $theme; ?>
+<section id="blog" <?php $theme->bodyClass(); ?>>
+    <?php if ($theme->havePosts()): $theme->thePost(); ?>
+    <article id="post-<?php $theme->theId(); ?>" <?php $theme->postClass(); ?>>
         <div class="post-content">
-            <?php if (self::hasPostThumbnail()): ?>
+            <?php if ($theme->hasPostThumbnail()): ?>
             <figure class="post-thumbnail">
-                <?php self::thePostListThumbnail(); ?>
-                <figcaption><?php self::thePostThumbnailCaption(); ?></figcaption>
+                <?php $theme->thePostListThumbnail(); ?>
+                <figcaption><?php $theme->thePostThumbnailCaption(); ?></figcaption>
             </figure>
             <?php endif; ?>
-            <?php self::theContent(); ?>
+            <?php $theme->theContent(); ?>
         </div>
     </article>
     <?php if ($this->isCommentsAvailable()): ?>
-        <?php self::theCommentsTemplate(); ?>
+        <?php $theme->theCommentsTemplate(); ?>
     <?php endif; ?>
     <?php else: ?>
-    <?php self::theDefaultEmptyMessage(); ?>
+    <?php $theme->theDefaultEmptyMessage(); ?>
     <?php endif; ?>
 </section>

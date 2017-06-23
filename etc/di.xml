@@ -16,9 +16,16 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Wwm\Blog\Cms\WordPress\ThemeInterface" type="Wwm\Blog\Cms\WordPress\Theme"/>
     <type name="Wwm\Blog\Cms\WordPress">
         <arguments>
             <argument name="filterInit" xsi:type="string">muplugins_loaded</argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme">
+        <arguments>
+            <argument name="textDomain" xsi:type="string">wwm</argument>
+            <argument name="defaultFiltersPriority" xsi:type="string">10</argument>
         </arguments>
     </type>
     <type name="Wwm\Blog\Cms\WordPress\FileSystem\Theme\Locator">

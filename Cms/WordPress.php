@@ -28,6 +28,8 @@ use Magento\Framework\Exception\State\InitException;
 final class WordPress
 {
     
+    const THEME = 'wwm';
+    
     protected $context;
     protected $config;
     protected $fileSystem;
@@ -129,10 +131,10 @@ final class WordPress
                     $buildClassTheme = function () use ($type) {
                         
                         global $theme;
-                        $theme = $this->theme = $this->context->getObjectManager()->create(Theme::class);
-                        $theme->setHomeURL($theme::homeUrl())->setHomeURLNew(
-                            $this->config->getBaseUrlFrontend() . $this->config->getRouteName()
-                        );
+                        $theme = $this->theme = $this->context->getObjectManager()
+                            ->create(\Wwm\Blog\Cms\WordPress\ThemeInterface::class);
+                        $theme->setHomeURL($theme->homeUrl())
+                            ->setHomeURLNew($this->config->getBaseUrlFrontend() . $this->config->getRouteName());
                         
                         if ($type == Router::LT_LOGIN) {
                             $theme->enableScriptFilters();
@@ -191,7 +193,7 @@ final class WordPress
             throw new InitException(__('WordPress environment not initialized'));
         }
         
-        $to = get_theme_root() . DIRECTORY_SEPARATOR . Theme::NAME;
+        $to = get_theme_root() . DIRECTORY_SEPARATOR . static::THEME;
         if ($this->composerFs->isSymlinkedDirectory($to)) {
             $this->composerFs->unlink($to);
         }
