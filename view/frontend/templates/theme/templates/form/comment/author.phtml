@@ -1,0 +1,11 @@
+<?php global $theme; $templateParameters = $theme->getTemplateParameters(); ?>
+<?php $requireNameAndEmail = $templateParameters->getRequireNameAndEmail(); ?>
+<div class="field comment-form-author<?php if ($requireNameAndEmail): ?> required<?php endif; ?>">
+    <label class="label" for="author"><span><?php $theme->_e('Name'); ?></span></label>
+    <div class="control">
+        <?php $currentCommenter = $templateParameters->getCurrentCommenter(); ?>
+        <input type="text" id="author" class="input-text" name="author" value="<?php
+            echo $theme->escAttr($currentCommenter['comment_author']); ?>" size="30" maxlength="245"<?php
+            if ($requireNameAndEmail): ?> aria-required="true" required="required" data-validate="{required:true}"<?php endif; ?>/>
+    </div>
+</div>

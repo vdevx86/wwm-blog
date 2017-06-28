@@ -1,0 +1,12 @@
+<?php global $theme; $templateParameters = $theme->getTemplateParameters(); ?>
+<?php $requireNameAndEmail = $templateParameters->getRequireNameAndEmail(); ?>
+<div class="field comment-form-email<?php if ($requireNameAndEmail): ?> required<?php endif; ?>">
+    <label class="label" for="email"><span><?php $theme->_e('Email'); ?></span></label>
+    <div class="control">
+        <?php $currentCommenter = $templateParameters->getCurrentCommenter(); ?>
+        <input type="email" id="email" class="input-text" name="email" value="<?php
+            echo $theme->escAttr($currentCommenter['comment_author_email']); ?>" size="30" maxlength="100" aria-describedby="email-notes"<?php
+            if ($requireNameAndEmail): ?> aria-required="true"<?php endif; ?> data-validate="{<?php
+            if ($requireNameAndEmail): ?>required:true,<?php endif; ?>'validate-email':true}"/>
+    </div>
+</div>

@@ -13,8 +13,8 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress\Theme\Storage;
+namespace Wwm\Blog\Cms\WordPress\Theme\Filters\Storage;
 
-class Globals extends \SplObjectStorage
+class Script extends \SplObjectStorage
 {
 }

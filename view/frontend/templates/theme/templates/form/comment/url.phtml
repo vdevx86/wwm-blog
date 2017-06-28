@@ -1,0 +1,8 @@
+<?php global $theme; ?>
+<div class="field comment-form-url">
+    <label class="label" for="url"><span><?php $theme->_e('Website'); ?></span></label>
+    <div class="control">
+        <input type="url" id="url" class="input-text" name="url" value="<?php echo $theme->escAttr($currentCommenter['comment_author_url']);
+            ?>" size="30" maxlength="200" data-validate="{'validate-url':true}"/>
+    </div>
+</div>

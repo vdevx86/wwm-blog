@@ -1,0 +1,7 @@
+<?php global $theme; ?>
+<legend class="legend comment-notes">
+    <span id="email-notes"><?php $theme->_e('Your email address will not be published.'); ?></span>
+    <?php if ($theme->getOption('require_name_email')): ?>
+        <span class="fields-required"><?php printf($theme->__('Required fields are marked %s'), '<span class="required">*</span>'); ?></span>
+    <?php endif; ?>
+</legend>

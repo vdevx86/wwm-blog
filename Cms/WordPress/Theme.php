@@ -20,31 +20,15 @@ namespace Wwm\Blog\Cms\WordPress;
 class Theme implements ThemeInterface
 {
     
-    const MAGIC_TABLE_FROM = [
-        'A', 'B', 'C', 'D', 'E', 'F', 'G',
-        'H', 'I', 'J', 'K', 'L', 'M', 'N',
-        'O', 'P', 'Q', 'R', 'S', 'T', 'U',
-        'V', 'W', 'X', 'Y', 'Z'
-    ];
-    
-    const MAGIC_TABLE_TO = [
-        '_a', '_b', '_c', '_d', '_e', '_f', '_g',
-        '_h', '_i', '_j', '_k', '_l', '_m', '_n',
-        '_o', '_p', '_q', '_r', '_s', '_t', '_u',
-        '_v', '_w', '_x', '_y', '_z'
-    ];
-    
     const IS_LIST = 'list';
-    const IS_LIST_WIDTH = 240;
-    const IS_LIST_HEIGHT = 300;
-    const IS_LIST_CROP = false;
     
-    const DEFAULT_AVATAR_SIZE = 80;
+    protected $magicTableFrom = [];
+    protected $magicTableTo = [];
     
     protected $context;
-    
     protected $filtersStorageGlobal;
     protected $filtersStorageScript;
+    protected $templateParameters;
     
     protected $textDomain;
     protected $defaultFiltersPriority;
@@ -57,21 +41,57 @@ class Theme implements ThemeInterface
     
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
-        Theme\Storage\Globals $filtersStorageGlobal,
-        Theme\Storage\Script $filtersStorageScript,
+        Theme\Filters\Storage\Globals $filtersStorageGlobal,
+        Theme\Filters\Storage\Script $filtersStorageScript,
+        Theme\Template\Parameters $templateParameters,
         $textDomain,
         $defaultFiltersPriority
     ) {
         $this->context = $context;
         $this->filtersStorageGlobal = $filtersStorageGlobal;
         $this->filtersStorageScript = $filtersStorageScript;
+        $this->templateParameters = $templateParameters;
         $this->textDomain = $textDomain;
         $this->defaultFiltersPriority = abs($defaultFiltersPriority);
         $this->init();
     }
     
+    public function getContext()
+    {
+        return $this->context;
+    }
+    
+    public function getTemplateParameters()
+    {
+        return $this->templateParameters;
+    }
+    
+    public function getHomeURL()
+    {
+        return $this->homeURL;
+    }
+    
+    public function setHomeURL($homeURL)
+    {
+        $this->homeURL = $homeURL;
+        return $this;
+    }
+    
+    public function getHomeURLNew()
+    {
+        return $this->homeURLNew;
+    }
+    
+    public function setHomeURLNew($homeURLNew)
+    {
+        $this->homeURLNew = $homeURLNew;
+        return $this;
+    }
+    
     public function init()
     {
+        
+        $this->fillMagicTables();
         
         global $wp_filter, $merged_filters;
         
@@ -92,17 +112,18 @@ class Theme implements ThemeInterface
         
     }
     
-    public function getContext() { return $this->context; }
-    
-    public function getHomeURL() { return $this->homeURL; }
-    public function setHomeURL($homeURL) { $this->homeURL = $homeURL; return $this; }
-    public function getHomeURLNew() { return $this->homeURLNew; }
-    public function setHomeURLNew($homeURLNew) { $this->homeURLNew = $homeURLNew; return $this; }
-    
     public function includeTemplateLoader()
     {
         require_once ABSPATH . WPINC . DIRECTORY_SEPARATOR . FileSystem::FN_TPLDR . FileSystem::FN_EXT;
         return $this;
+    }
+    
+    protected function fillMagicTables()
+    {
+        for ($I = 65; $I < 91; ++$I) {
+            $this->magicTableFrom[] = chr($I);
+            $this->magicTableTo[] = '_' . chr($I + 32);
+        }
     }
     
     public function getContents(\Closure $function, array $params = [])
@@ -315,7 +336,8 @@ class Theme implements ThemeInterface
     {
         
         $function = function ($postId) {
-            echo '<input type="hidden" name="redirect_to" value="', $this->getPermalink($postId), '"/>';
+            $this->templateParameters->setPostId($postId);
+            $this->locateTemplate(['form', 'comment', 'formFooter']);
         };
         
         $name = 'comment_form';
@@ -397,7 +419,7 @@ class Theme implements ThemeInterface
     {
         
         $function = function () {
-            echo '<fieldset class="fieldset">';
+            $this->locateTemplate(['form', 'comment', 'commentFormTop']);
         };
         
         $name = 'comment_form_top';
@@ -413,35 +435,37 @@ class Theme implements ThemeInterface
         
         $function = function ($fields) {
             
-            $fields['comment_field'] =
-            '<div class="field comment-form-comment required">' .
-                '<label class="label" for="comment"><span>' . $this->_x('Comment', 'noun') . '</span></label>' .
-                '<div class="control">' .
-                    '<textarea id="comment" class="input-text" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required" data-validate="{required:true}"></textarea>' .
-                '</div>' .
-            '</div>';
+            $templates = [
+                'fields' => 'fields',
+                'comment_field' => 'commentField',
+                'must_log_in' => 'mustLogIn',
+                'logged_in_as' => 'loggedInAs',
+                'comment_notes_before' => 'commentNotesBefore',
+                'comment_notes_after' => 'commentNotesAfter',
+                'action' => 'action',
+                'id_form' => 'idForm',
+                'id_submit' => 'idSubmit',
+                'class_form' => 'classForm',
+                'class_submit' => 'classSubmit',
+                'name_submit' => 'nameSubmit',
+                'title_reply' => 'titleReply',
+                'title_reply_to' => 'titleReplyTo',
+                'title_reply_before' => 'titleReplyBefore',
+                'title_reply_after' => 'titleReplyAfter',
+                'cancel_reply_before' => 'cancelReplyBefore',
+                'cancel_reply_after' => 'cancelReplyAfter',
+                'cancel_reply_link' => 'cancelReplyLink',
+                'label_submit' => 'labelSubmit',
+                'submit_button' => 'submitButton',
+                'submit_field' => 'submitField',
+                'format' => 'format'
+            ];
             
-            if ($this->getOption('require_name_email')) {
-                $requiredText = '<span class="fields-required">' . sprintf($this->__('Required fields are marked %s'), '<span class="required">*</span>') . '</span>';
-            } else {
-                $requiredText = '';
+            foreach ($templates as $fieldKey => &$templateName) {
+                if ($renderedTemplate = $this->renderTemplate(['form', 'comment', $templateName])) {
+                    $fields[$fieldKey] = $renderedTemplate;
+                }
             }
-            
-            $fields['comment_notes_before'] =
-            '<legend class="legend comment-notes">' .
-                '<span id="email-notes">' . $this->__('Your email address will not be published.') . '</span>' .
-                $requiredText .
-            '</legend>';
-            
-            $fields['title_reply_before'] = '<div id="reply-title" class="comment-reply-title">';
-            $fields['title_reply_after'] = '</div>';
-            
-            $fields['submit_button'] =
-            '<div class="primary">' .
-                '<input type="submit" name="%1$s" id="%2$s" class="action primary %3$s" value="%4$s"/>' .
-            '</div>';
-            
-            $fields['submit_field'] = '<div class="actions-toolbar form-submit">%1$s %2$s</div>';
             
             return $fields;
             
@@ -460,37 +484,20 @@ class Theme implements ThemeInterface
         
         $function = function () {
             
-            $requireNameAndEmail = $this->getOption('require_name_email');
-            $currentCommenter = $this->wpGetCurrentCommenter();
+            $templates = [
+                'author' => 'author',
+                'email' => 'email',
+                'url' => 'url'
+            ];
             
-            $fields['author'] =
-            '<div class="field comment-form-author' . ($requireNameAndEmail ? ' required' : '') . '">' .
-                '<label class="label" for="author"><span>' . $this->__('Name') . '</span></label>' .
-                '<div class="control">' .
-                    '<input type="text" id="author" class="input-text" name="author" value="' . $this->escAttr($currentCommenter['comment_author']) . '" size="30" maxlength="245"' .
-                        ($requireNameAndEmail ? ' aria-required="true" required="required" data-validate="{required:true}"' : '') . '/>' .
-                '</div>' .
-            '</div>';
+            $this->templateParameters->setRequireNameAndEmail($this->getOption('require_name_email'))
+                ->setCurrentCommenter($this->wpGetCurrentCommenter());
             
-            $fields['email'] =
-            '<div class="field comment-form-email' . ($requireNameAndEmail ? ' required' : '') . '">' .
-                '<label class="label" for="email"><span>' . $this->__('Email') . '</span></label>' .
-                '<div class="control">' .
-                    '<input type="email" id="email" class="input-text" name="email" value="' . $this->escAttr($currentCommenter['comment_author_email']) .
-                        '" size="30" maxlength="100" aria-describedby="email-notes"' .
-                            ($requireNameAndEmail ? ' aria-required="true"' : '') . ' data-validate="{' .
-                            ($requireNameAndEmail ? 'required:true,' : '') . '\'validate-email\':true}"/>' .
-                '</div>' .
-            '</div>';
-            
-            $fields['url'] =
-            '<div class="field comment-form-url">' .
-                '<label class="label" for="url"><span>' . $this->__('Website') . '</span></label>' .
-                '<div class="control">' .
-                    '<input type="url" id="url" class="input-text" name="url" value="' . $this->escAttr($currentCommenter['comment_author_url']) .
-                        '" size="30" maxlength="200" data-validate="{\'validate-url\':true}"/>' .
-                '</div>' .
-            '</div>';
+            foreach ($templates as $fieldKey => &$templateName) {
+                if ($renderedTemplate = $this->renderTemplate(['form', 'comment', $templateName])) {
+                    $fields[$fieldKey] = $renderedTemplate;
+                }
+            }
             
             return $fields;
             
@@ -508,7 +515,7 @@ class Theme implements ThemeInterface
     {
         
         $function = function () {
-            echo '</fieldset>';
+            $this->locateTemplate(['form', 'comment', 'commentFormBottom']);
         };
         
         $name = 'comment_form';
@@ -553,26 +560,7 @@ class Theme implements ThemeInterface
     {
         
         $function = function ($output) {
-            return
-            '<form action="' . $this->escUrl($this->setUrlScheme($this->getHomeURLNew() . '/wp-login.php?action=postpass', 'login_post')) . '" method="post" class="post-password-form" data-hasrequired="' .
-                    $this->__('* Required Fields') . '" novalidate="novalidate" data-mage-init=\'{"validation":{}}\'>' .
-                '<fieldset class="fieldset">' .
-                    '<legend class="legend">' . $this->__('This content is password protected. To view it please enter your password below:') . '</legend>' .
-                    '<div class="field required">' .
-                        '<label class="label" for="post-password"><span>' . $this->__('Password:') . '</span></label>' .
-                        '<div class="control">' .
-                            '<input type="password" name="post_password" id="post-password" class="input-text" value="" size="20" required="required" aria-required="true" data-validate="{required:true}"/>' .
-                        '</div>' .
-                    '</div>' .
-                    '<div class="actions-toolbar">' .
-                        '<div class="primary">' .
-                            '<button type="submit" class="action submit primary">' .
-                                '<span>' . $this->escAttrX('Enter', 'post password form') . '</span>' .
-                            '</button>' .
-                        '</div>' .
-                    '</div>' .
-                '</fieldset>' .
-            '</form>';
+            return $this->renderTemplate(['form', 'password']);
         };
         
         $name = 'the_password_form';
@@ -591,10 +579,10 @@ class Theme implements ThemeInterface
                 'name' => $this->__('Left'),
                 'id' => 'sidebar-left',
                 'description' => $this->__('Add widgets here to appear in your sidebar.'),
-                'before_widget' => '<div id="%1$s" class="widget block widget-blog %2$s">',
-                'after_widget' => '</div>',
-                'before_title' => '<div class="widget-title block-title"><strong>',
-                'after_title' => '</strong></div>'
+                'before_widget' => $this->renderTemplate(['sidebar', 'left', 'beforeWidget']),
+                'after_widget' => $this->renderTemplate(['sidebar', 'left', 'afterWidget']),
+                'before_title' => $this->renderTemplate(['sidebar', 'left', 'beforeTitle']),
+                'after_title' => $this->renderTemplate(['sidebar', 'left', 'afterTitle'])
             ]);
         };
         
@@ -775,7 +763,7 @@ class Theme implements ThemeInterface
     
     public function initImageSizes()
     {
-        $this->addImageSize(static::IS_LIST, static::IS_LIST_WIDTH, static::IS_LIST_HEIGHT, static::IS_LIST_CROP);
+        $this->addImageSize(static::IS_LIST, 240, 300, false);
     }
     
     public function theId()
@@ -821,7 +809,7 @@ class Theme implements ThemeInterface
     
     public function thePostListTags()
     {
-        $this->theTags('<strong>' . __('Tags: ') . '</strong>');
+        $this->theTags($this->renderTemplate(['tag', 'before']));
     }
     
     public function theCategory($separator = ', ', $parents = '', $postId = false)
@@ -829,24 +817,40 @@ class Theme implements ThemeInterface
         the_category($separator, $parents, $postId);
     }
     
-    public function getTemplatePart($slug, $name = '', $templatePrefix = 'templates')
+    public function locateTemplates(array $templateNames, $load = true, $requireOnce = false)
     {
-        get_template_part($templatePrefix . DIRECTORY_SEPARATOR . $slug, $name);
+        foreach ($templateNames as &$templateName) {
+            array_unshift($templateName, static::SUBTEMPLATE_PREFIX);
+            $templateName = implode(DIRECTORY_SEPARATOR, $templateName) . static::FN_EXT;
+        }
+        return locate_template($templateNames, $load, $requireOnce);
+    }
+    
+    public function locateTemplate(array $templateName, $load = true, $requireOnce = false)
+    {
+        return $this->locateTemplates([$templateName], $load, $requireOnce);
+    }
+    
+    public function renderTemplate(array $templateName, $load = true, $requireOnce = false)
+    {
+        return $this->getContents(function($templateName, $load, $requireOnce) {
+            $this->locateTemplates([$templateName], $load, $requireOnce);
+        }, [$templateName, $load, $requireOnce]);
     }
     
     public function getNavigation()
     {
-        $this->getTemplatePart('navigation');
+        $this->locateTemplate(['navigation']);
     }
     
     public function thePrimaryButton()
     {
-        $this->getTemplatePart('button', 'primary');
+        $this->locateTemplate(['button', 'primary']);
     }
     
     public function theDefaultEmptyMessage()
     {
-        $this->getTemplatePart('message', 'empty');
+        $this->locateTemplate(['message', 'empty']);
     }
     
     public function isCommentsAvailable()
@@ -874,7 +878,7 @@ class Theme implements ThemeInterface
             $this->commentForm($args, $postId);
         }, [$args, $postId]);
         
-        return str_replace('<form ', '<form data-mage-init=\'{"validation":{}}\' ', $commentsFormHtml);
+        return str_replace('<form ', $this->renderTemplate(['form', 'comment', 'formTag']), $commentsFormHtml);
         
     }
     
@@ -907,12 +911,7 @@ class Theme implements ThemeInterface
     
     public function getDefaultAvatar()
     {
-        return $this->getAvatar(
-            $this->getTheAuthorMeta('user_email'),
-            static::DEFAULT_AVATAR_SIZE,
-            null,
-            $this->getTheAuthor()
-        );
+        return $this->getAvatar($this->getTheAuthorMeta('user_email'), 80, null, $this->getTheAuthor());
     }
     
     public function theDefaultAvatar()
@@ -928,8 +927,14 @@ class Theme implements ThemeInterface
     public function getLoginForm(array $args = [])
     {
         
+        $redirect = 'http';
+        if ($this->isSsl()) {
+            $redirect .= 's';
+        }
+        $redirect .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        
         $defaults = [
-            'redirect' => ($this->isSsl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            'redirect' => $redirect,
             'form_id' => 'loginform',
             'label_username' => $this->__('Username or Email'),
             'label_password' => $this->__('Password'),
@@ -945,56 +950,12 @@ class Theme implements ThemeInterface
         ];
         
         $args = $this->wpParseArgs($args, $this->applyFilters('login_form_defaults', $defaults));
-        $loginFormTop = $this->applyFilters('login_form_top', '', $args);
-        $loginFormMiddle = $this->applyFilters('login_form_middle', '', $args);
-        $loginFormBottom = $this->applyFilters('login_form_bottom', '', $args);
+        $this->templateParameters->setData($args)
+            ->setTop($this->applyFilters('login_form_top', '', $args))
+            ->setMiddle($this->applyFilters('login_form_middle', '', $args))
+            ->setBottom($this->applyFilters('login_form_bottom', '', $args));
         
-        return
-        '<form name="' . $args['form_id'] . '" id="' . $args['form_id'] . '" action="' . $this->escUrl($this->getHomeURLNew() . '/wp-login.php', 'login_post') . '" method="post" data-hasrequired="' . $this->__('* Required Fields') . '" novalidate="novalidate" data-mage-init=\'{"validation":{}}\'>' .
-            '<fieldset class="fieldset">' .
-                
-                $loginFormTop .
-                
-                '<div class="field login-username required">' .
-                    '<label class="label" for="' . $this->escAttr($args['id_username']) . '"><span>' . $this->escHtml($args['label_username']) . '</span></label>' .
-                    '<div class="control">' .
-                        '<input type="text" name="log" id="' . $this->escAttr($args['id_username']) . '" class="input input-text" value="' . $this->escAttr($args['value_username']) . '" required="required" aria-required="true" data-validate="{required:true}"/>' .
-                    '</div>' .
-                '</div>' .
-                
-                '<div class="field login-password required">' .
-                    '<label class="label" for="' . $this->escAttr($args['id_password']) . '"><span>' . $this->escHtml($args['label_password']) . '</span></label>' .
-                    '<div class="control">' .
-                        '<input type="password" name="pwd" id="' . $this->escAttr($args['id_password']) . '" class="input input-text" value="" required="required" aria-required="true" data-validate="{required:true}"/>' .
-                    '</div>' .
-                '</div>' .
-                
-                $loginFormMiddle .
-                
-                (
-                    $args['remember']
-                ?
-                    '<div class="field choice login-remember">' .
-                        '<input type="checkbox" id="' . $this->escAttr($args['id_remember']) . '" name="rememberme" value="forever" class="checkbox"' . ($args['value_remember'] ? ' checked="checked"' : '') . '/>' .
-                        '<label for="' . $this->escAttr($args['id_remember']) . '" class="label"><span>' . $this->escHtml($args['label_remember']) . '</span></label>' .
-                    '</div>'
-                :
-                    ''
-                ) .
-                
-                '<div class="actions-toolbar">' .
-                    '<div class="primary">' .
-                        '<button type="submit" id="' . $this->escAttr($args['id_submit']) . '" class="action submit login-submit primary">' .
-                            '<span>' . $this->escAttr($args['label_log_in']) . '</span>' .
-                        '</button>' .
-                        '<input type="hidden" name="redirect_to" value="' . $this->escUrl(str_replace($this->getHomeURL(), $this->getHomeURLNew(), $args['redirect'])) . '"/>' .
-                    '</div>' .
-                '</div>' .
-                
-                $loginFormBottom .
-                
-            '</fieldset>' .
-        '</form>';
+        return $this->renderTemplate(['form', 'login']);
         
     }
     
@@ -1036,7 +997,7 @@ class Theme implements ThemeInterface
     
     public function __call($name, array $args)
     {
-        $name = str_replace(static::MAGIC_TABLE_FROM, static::MAGIC_TABLE_TO, $name);
+        $name = str_replace($this->magicTableFrom, $this->magicTableTo, $name);
         return $name(...$args);
     }
     

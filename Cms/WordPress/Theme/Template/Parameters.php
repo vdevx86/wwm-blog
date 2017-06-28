@@ -13,15 +13,8 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress;
+namespace Wwm\Blog\Cms\WordPress\Theme\Template;
 
-interface ThemeInterface
+class Parameters extends \Magento\Framework\DataObject
 {
-    
-    const AREA_CODE = 'frontend';
-    const TEXT_DOMAIN_DEFAULT = 'default';
-    
-    const SUBTEMPLATE_PREFIX = 'templates';
-    const FN_EXT = '.phtml';
-    
 }

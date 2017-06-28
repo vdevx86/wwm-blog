@@ -1,0 +1,34 @@
+<?php global $theme; $templateParameters = $theme->getTemplateParameters(); ?>
+<form name="<?php echo $templateParameters->getFormId(); ?>" id="<?php echo $templateParameters->getFormId(); ?>" action="<?php echo $theme->escUrl($theme->getHomeURLNew() . '/wp-login.php', 'login_post'); ?>" method="post" data-hasrequired="<?php $theme->_e('* Required Fields'); ?>" novalidate="novalidate" data-mage-init='{"validation":{}}'>
+    <fieldset class="fieldset">
+        <?php $templateParameters->getTop(); ?>
+        <div class="field login-username required">
+            <label class="label" for="<?php echo $theme->escAttr($templateParameters->getIdUsername()); ?>"><span><?php echo $theme->escAttr($templateParameters->getLabelUsername()); ?></span></label>
+            <div class="control">
+                <input type="text" name="log" id="<?php echo $theme->escAttr($templateParameters->getIdUsername()); ?>" class="input input-text" value="<?php echo $theme->escAttr($templateParameters->getValueUsername()); ?>" required="required" aria-required="true" data-validate="{required:true}"/>
+            </div>
+        </div>
+        <div class="field login-password required">
+            <label class="label" for="<?php echo $theme->escAttr($templateParameters->getIdPassword()); ?>"><span><?php echo $theme->escHtml($templateParameters->getLabelPassword()); ?></span></label>
+            <div class="control">
+                <input type="password" name="pwd" id="<?php echo $theme->escAttr($templateParameters->getIdPassword()); ?>" class="input input-text" value="" required="required" aria-required="true" data-validate="{required:true}"/>
+            </div>
+        </div>
+        <?php $templateParameters->getMiddle(); ?>
+        <?php if ($templateParameters->getRemember()): ?>
+            <div class="field choice login-remember">
+                <input type="checkbox" id="<?php echo $theme->escAttr($templateParameters->getIdRemember()); ?>" name="rememberme" value="forever" class="checkbox"<?php if ($templateParameters->getValueRemember()): ?> checked="checked"<?php endif; ?>/>
+                <label for="<?php echo $theme->escAttr($templateParameters->getIdRemember()); ?>" class="label"><span><?php echo $theme->escAttr($templateParameters->getLabelRemember()); ?></span></label>
+            </div>
+        <?php endif; ?>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button type="submit" id="<?php echo $theme->escAttr($templateParameters->getIdSubmit()); ?>" class="action submit login-submit primary">
+                    <span><?php echo $theme->escAttr($templateParameters->getLabelLogIn()); ?></span>
+                </button>
+                <input type="hidden" name="redirect_to" value="<?php echo $theme->escUrl(str_replace($theme->getHomeURL(), $theme->getHomeURLNew(), $templateParameters->getRedirect())); ?>"/>
+            </div>
+        </div>
+        <?php $templateParameters->getBottom(); ?>
+    </fieldset>
+</form>
