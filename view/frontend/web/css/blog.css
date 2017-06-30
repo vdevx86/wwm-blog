@@ -85,6 +85,7 @@
 .widget-blog ol{margin:0;padding:0;list-style:none}
 .widget-blog li{margin:0}
 .widget-blog.widget_meta abbr[title]{border:0 none;cursor:pointer}
+.post-content .search-form .fieldset,
 .widget-blog.widget_search .fieldset{margin:0 0 1rem}
 .widget-blog.widget_search label{cursor:pointer}
 .widget-blog.widget_nav_menu ul{padding-left:1.8rem;list-style:disc outside none}
