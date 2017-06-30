@@ -1,4 +1,4 @@
-# Free integration between Magento and WordPress
+# Free integration between Magento 2 and WordPress
 WWM Blog Magento 2 Extension by Walk with Magento
 
 ## System Requirements
@@ -21,7 +21,7 @@ You have to install WordPress in the same directory as where you have installed 
 
 Let's assume you have already installed Magento 2 and WordPress.
 
-After WordPress setup you may live the installation directory name as is (wordpress) or rename it to something very simple. It considered only for internal use, do not change it to public names such as "blog". Remember this directory name, it will be needed later. Let's say we are liaving this name as is: wordpress.
+After WordPress setup you may live the installation directory name as is (wordpress) or rename it to something very simple. It considered only for internal use, do not change it to public names such as "blog". Remember this directory name, it will be needed later. Let's say we are leaving this name as is: wordpress.
 
 Place the Magento 2 extension into this directory: _app/code/Wwm/Blog_. Create last two directories manually. Then enable the extension. If you don't know how to enable it follow [this official guide](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-subcommands-enable.html#instgde-cli-subcommands-enable-disable). Don't forget about the Magento 2 cache – flush it if needed.
 
@@ -30,8 +30,9 @@ Copy the "functions.php" file from the extension directory into the _app_ direct
 Almost done. Login to the Magento 2 admin panel and go to:
 **Stores -> Configuration -> WWM -> WordPress Integration**
 Enter your WordPress installation directory name (I told you earlier to remember it) and other settings and press "Save Settings".
+Don't forget to install the WordPress theme, press the "Install Theme" button.
+Now the WordPress theme will be available from the WordPress admin panel.
 
-Now try to visit your new blog page at least once. It will be probably broken or unavailable. This is because your WordPress theme wasn't activated yet.
 Go to the WordPress admin panel and enable the WordPress "wwm" theme. If you don't know how to enable it follow [this official guide](https://codex.wordpress.org/Using_Themes).
 
 That's it!
