@@ -30,6 +30,10 @@ final class WordPress
     
     const THEME = 'wwm';
     
+    const STATE_INIT = 0;
+    const STATE_PROGRESS = 1;
+    const STATE_SUCCESS = 2;
+    
     protected $context;
     protected $config;
     protected $fileSystem;
@@ -37,13 +41,16 @@ final class WordPress
     protected $composerFs;
     protected $themeLocator;
     
-    protected $filterInit;
-    
     protected $bootstrap = false;
-    protected $status = false;
+    protected $state = self::STATE_INIT;
     
     protected $theme = null;
+    protected $query = null;
+    protected $type = Router::LT_DEFAULT;
     protected $result = null;
+    
+    protected $filterInit;
+    protected $themeInit;
     
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -52,7 +59,8 @@ final class WordPress
         WordPress\FileSystem\File\Patch $patch,
         \Composer\Util\Filesystem $composerFs,
         \Wwm\Blog\Cms\WordPress\FileSystem\Theme\Locator $themeLocator,
-        $filterInit
+        $filterInit,
+        $themeInit
     ) {
         $this->context = $context;
         $this->config = $config;
@@ -61,20 +69,144 @@ final class WordPress
         $this->composerFs = $composerFs;
         $this->themeLocator = $themeLocator;
         $this->filterInit = $filterInit;
+        $this->themeInit = $themeInit;
     }
     
-    public function setBootstrap($bootstrap) { $this->bootstrap = $bootstrap; return $this; }
-    public function getBootstrap() { return $this->bootstrap; }
+    public function checkInitState()
+    {
+        if ($this->state != self::STATE_INIT) {
+            throw new \LogicException('Method availability: only before initialization');
+        }
+        return $this;
+    }
     
-    public function getStatus() { return $this->status; }
+    public function checkProgressState()
+    {
+        if ($this->state != self::STATE_PROGRESS) {
+            throw new \LogicException('Method availability: only during initialization');
+        }
+        return $this;
+    }
     
-    public function getTheme() { return $this->theme; }
-    public function getQueryResult() { return $this->result; }
+    public function checkSuccessState()
+    {
+        if ($this->state != self::STATE_SUCCESS) {
+            throw new \LogicException('Method availability: only after initialization');
+        }
+        return $this;
+    }
     
-    public function load($query = false, $type = Router::LT_DEFAULT)
+    public function setBootstrap($bootstrap)
+    {
+        $this->checkInitState();
+        $this->bootstrap = $bootstrap;
+        return $this;
+    }
+    
+    public function getBootstrap()
+    {
+        return $this->bootstrap;
+    }
+    
+    public function getState()
+    {
+        return $this->state;
+    }
+    
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+    
+    public function setQuery($query)
+    {
+        $this->checkInitState();
+        $this->query = $query;
+        return $this;
+    }
+    
+    public function getQuery()
+    {
+        return $this->query;
+    }
+    
+    public function setType($type)
+    {
+        $this->checkInitState();
+        $this->type = $type;
+        return $this;
+    }
+    
+    public function getType()
+    {
+        return $this->type;
+    }
+    
+    public function getQueryResult()
+    {
+        return $this->result;
+    }
+    
+    public function loadTheme()
     {
         
-        $patch =& $this->patch;
+        $this->checkProgressState();
+        
+        global $theme;
+        $theme = $this->theme = $this->context->getObjectManager()
+            ->create(\Wwm\Blog\Cms\WordPress\ThemeInterface::class);
+        $theme->setHomeURL($theme->homeUrl())
+            ->setHomeURLNew($this->config->getBaseUrlFrontend() . $this->config->getRouteName());
+        
+        if ($this->type == Router::LT_LOGIN) {
+            $theme->enableScriptFilters();
+        } else {
+            define('WP_USE_THEMES', true);
+            $theme->enableGlobalFilters();
+        }
+        
+        return $this;
+        
+    }
+    
+    public function initSuperglobals()
+    {
+        
+        $this->checkProgressState();
+        
+        $installationPath = DIRECTORY_SEPARATOR . $this->config->getInstallationPath() . DIRECTORY_SEPARATOR;
+        $_SERVER['REQUEST_URI'] = $installationPath;
+        
+        if ($this->query) {
+            $_SERVER['REQUEST_URI'] .= $this->query;
+            $_SERVER['QUERY_STRING'] = parse_url($this->query, PHP_URL_QUERY);
+            parse_str($_SERVER['QUERY_STRING'], $_GET);
+        } else {
+            $_SERVER['QUERY_STRING'] = '';
+            $_GET = [];
+        }
+        
+        $_SERVER['REQUEST_METHOD'] = [HTTPClient::GET, HTTPClient::POST][$this->type];
+        
+        $fileSystem = $this->fileSystem;
+        $fileName = [$fileSystem::FN_INDEX, $fileSystem::FN_LOGIN][$this->type] . $fileSystem::FN_EXT;
+        
+        $_SERVER['SCRIPT_FILENAME'] = $fileSystem->getInstallationPath() . $fileName;
+        $_SERVER['SCRIPT_NAME'] = DIRECTORY_SEPARATOR . $fileName;
+        $_SERVER['PHP_SELF'] .= $installationPath . $fileName;
+        
+        unset($_SERVER['REDIRECT_URL'], $_SERVER['REDIRECT_QUERY_STRING']);
+        return $this;
+        
+    }
+    
+    public function load()
+    {
+        
+        $this->checkInitState();
+        $this->state = self::STATE_PROGRESS;
+        
+        $patch = $this->patch;
         if ($file = $patch->getPatchedFile($patch::PT_CONFIG)) {
             $fileSystem = $this->fileSystem->load();
             define('ABSPATH', $fileSystem->getInstallationPath());
@@ -84,76 +216,14 @@ final class WordPress
                 if ($file = $patch->getPatchedFile($patch::PT_SETTINGS)) {
                     
                     list($server, $get, $post) = [$_SERVER, $_GET, $_POST];
+                    $this->initSuperglobals();
                     
-                    $requestMethod =& $_SERVER['REQUEST_METHOD'];
-                    
-                    $scriptFilename =& $_SERVER['SCRIPT_FILENAME'];
-                    $scriptFilename = $fileSystem->getInstallationPath();
-                    
-                    $scriptName =& $_SERVER['SCRIPT_NAME'];
-                    $scriptName = DIRECTORY_SEPARATOR;
-                    
-                    $requestURI =& $_SERVER['REQUEST_URI'];
-                    $requestURI = DIRECTORY_SEPARATOR . $this->config->getInstallationPath() . DIRECTORY_SEPARATOR;
-                    
-                    $phpSelf =& $_SERVER['PHP_SELF'];
-                    $phpSelf = $requestURI;
-                    
-                    $queryString =& $_SERVER['QUERY_STRING'];
-                    
-                    if ($query) {
-                        $requestURI .= $query;
-                        $queryString = parse_url($query, PHP_URL_QUERY);
-                        parse_str($queryString, $_GET);
-                    } else {
-                        $queryString = '';
-                        $_GET = [];
-                    }
-                    
-                    if ($type == Router::LT_LOGIN) {
-                        $requestMethod = HTTPClient::POST;
-                        $scriptFilename .= $fileSystem::FN_LOGIN;
-                        $scriptName .= $fileSystem::FN_LOGIN;
-                        $phpSelf .= $fileSystem::FN_LOGIN;
-                    } else {
-                        $requestMethod = HTTPClient::GET;
-                        $scriptFilename .= $fileSystem::FN_INDEX;
-                        $scriptName .= $fileSystem::FN_INDEX;
-                        $phpSelf .= $fileSystem::FN_INDEX;
-                    }
-                    
-                    $scriptFilename .= $fileSystem::FN_EXT;
-                    $scriptName .= $fileSystem::FN_EXT;
-                    $phpSelf .= $fileSystem::FN_EXT;
-                    
-                    unset($query, $_SERVER['REDIRECT_URL'], $_SERVER['REDIRECT_QUERY_STRING']);
-                    
-                    $buildClassTheme = function () use ($type) {
-                        
-                        global $theme;
-                        $theme = $this->theme = $this->context->getObjectManager()
-                            ->create(\Wwm\Blog\Cms\WordPress\ThemeInterface::class);
-                        $theme->setHomeURL($theme->homeUrl())
-                            ->setHomeURLNew($this->config->getBaseUrlFrontend() . $this->config->getRouteName());
-                        
-                        if ($type == Router::LT_LOGIN) {
-                            $theme->enableScriptFilters();
-                        } else {
-                            define('WP_USE_THEMES', true);
-                            $theme->enableGlobalFilters();
-                        }
-                        
-                    };
-                    
-                    require_once ABSPATH . $fileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR .
-                        $fileSystem::FN_PLUGIN . $fileSystem::FN_EXT;
-                    
-                    add_filter($this->filterInit, $buildClassTheme, 10, 0);
+                    require_once ABSPATH . $fileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR . $fileSystem::FN_PLUGIN . $fileSystem::FN_EXT;
+                    add_filter($this->filterInit, [$this, $this->themeInit], 10, 0);
                     eval($file);
-                    remove_filter($this->filterInit, $buildClassTheme);
-                    unset($buildClassTheme);
+                    remove_filter($this->filterInit, [$this, $this->themeInit]);
                     
-                    if ($type == Router::LT_LOGIN) {
+                    if ($this->type == Router::LT_LOGIN) {
                         if ($file = $patch->getPatchedFile($patch::PT_LOGIN)) {
                             eval($file);
                         }
@@ -172,13 +242,13 @@ final class WordPress
                     }
                     
                     list($_SERVER, $_GET, $_POST) = [$server, $get, $post];
-                    $this->status = true;
+                    $this->state = self::STATE_SUCCESS;
                     
                 }
             }
         }
         
-        if (!$this->status) {
+        if ($this->state != self::STATE_SUCCESS) {
             throw new InitException(__('Could not initialize WordPress environment'));
         }
         
@@ -189,11 +259,9 @@ final class WordPress
     public function installTheme()
     {
         
-        if (!$this->status) {
-            throw new InitException(__('WordPress environment not initialized'));
-        }
+        $this->checkSuccessState();
         
-        $to = get_theme_root() . DIRECTORY_SEPARATOR . static::THEME;
+        $to = get_theme_root() . DIRECTORY_SEPARATOR . self::THEME;
         if ($this->composerFs->isSymlinkedDirectory($to)) {
             $this->composerFs->unlink($to);
         }

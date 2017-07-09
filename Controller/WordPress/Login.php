@@ -41,7 +41,11 @@ class Login extends \Magento\Framework\App\Action\Action
         $result = null;
         
         try {
-            $this->wp->load($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false), Router::LT_LOGIN);
+            
+            $this->wp->setQuery($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false))
+                ->setType(Router::LT_LOGIN)
+                ->load();
+            
         } catch (\Exception $e) {
             
             $this->context->getMessageManager()->addError($e->getMessage());

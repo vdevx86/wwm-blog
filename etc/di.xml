@@ -20,6 +20,7 @@
     <type name="Wwm\Blog\Cms\WordPress">
         <arguments>
             <argument name="filterInit" xsi:type="string">muplugins_loaded</argument>
+            <argument name="themeInit" xsi:type="string">loadTheme</argument>
         </arguments>
     </type>
     <type name="Wwm\Blog\Cms\WordPress\Theme">

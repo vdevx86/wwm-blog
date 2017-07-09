@@ -44,7 +44,7 @@ class Index extends \Magento\Framework\App\Action\Action
         $result = false;
         
         try {
-            $this->wp->load($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false));
+            $this->wp->setQuery($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false))->load();
             $result = $this->resultPageFactory->create()->addDefaultHandle();
         } catch (\Exception $e) {
             $this->context->getMessageManager()->addError($e->getMessage());
