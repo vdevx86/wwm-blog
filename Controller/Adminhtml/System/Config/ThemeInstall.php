@@ -18,18 +18,19 @@ namespace Wwm\Blog\Controller\Adminhtml\System\Config;
 class ThemeInstall extends \Magento\Backend\App\Action
 {
     
-    protected $context;
     protected $resultJsonFactory;
     protected $wp;
+    protected $themeInstaller;
     
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Wwm\Blog\Cms\WordPress $wp
+        \Wwm\Blog\Cms\WordPress $wp,
+        \Wwm\Blog\Cms\WordPress\FileSystem\Theme\Installer $themeInstaller
     ) {
-        $this->context = $context;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->wp = $wp;
+        $this->themeInstaller = $themeInstaller;
         parent::__construct($context);
     }
     
@@ -40,9 +41,8 @@ class ThemeInstall extends \Magento\Backend\App\Action
         
         try {
             
-            $this->wp->setBootstrap(true)
-                ->load()
-                ->installTheme();
+            $this->wp->setBootstrap(true)->load();
+            $this->themeInstaller->install();
             
             $result = __('Theme installed successfully');
             

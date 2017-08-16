@@ -28,8 +28,16 @@ class Patch extends \Wwm\Blog\Cms\WordPress\FileSystem\File
     
     protected $patchCount = null;
     
-    public function setPatchCount($patchCount) { $this->patchCount = $patchCount; return $this; }
-    public function getPatchCount() { return $this->patchCount; }
+    public function setPatchCount($patchCount)
+    {
+        $this->patchCount = $patchCount;
+        return $this;
+    }
+    
+    public function getPatchCount()
+    {
+        return $this->patchCount;
+    }
     
     public function patch($content, $from, $to = '')
     {

@@ -17,21 +17,182 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Wwm\Blog\Cms\WordPress\ThemeInterface" type="Wwm\Blog\Cms\WordPress\Theme"/>
+    <preference for="Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface" type="Wwm\Blog\Magento\Framework\App\Request\Http\Uri\Parser"/>
     <type name="Wwm\Blog\Cms\WordPress">
         <arguments>
             <argument name="filterInit" xsi:type="string">muplugins_loaded</argument>
             <argument name="themeInit" xsi:type="string">loadTheme</argument>
         </arguments>
     </type>
-    <type name="Wwm\Blog\Cms\WordPress\Theme">
+    <type name="Wwm\Blog\Cms\WordPress\Theme\LayerFactory">
         <arguments>
-            <argument name="textDomain" xsi:type="string">wwm</argument>
-            <argument name="defaultFiltersPriority" xsi:type="string">10</argument>
+            <argument name="layerItems" xsi:type="array">
+                <item name="plugin" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\Plugin</item>
+                <item name="functions" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\Functions</item>
+                <item name="l10n" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\L10n</item>
+                <item name="theme" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\Theme</item>
+                <item name="media" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\Media</item>
+                <item name="template" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\Template</item>
+                <item name="postTemplate" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\PostTemplate</item>
+                <item name="postThumbnailTemplate" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\PostThumbnailTemplate</item>
+                <item name="categoryTemplate" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\CategoryTemplate</item>
+                <item name="commentTemplate" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\CommentTemplate</item>
+                <item name="comment" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\Comment</item>
+                <item name="pluggable" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\Pluggable</item>
+                <item name="generalTemplate" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\GeneralTemplate</item>
+                <item name="linkTemplate" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\LinkTemplate</item>
+                <item name="widgets" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\LayerItem\Widgets</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Options">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="text_domain" xsi:type="string">wwm</item>
+            </argument>
         </arguments>
     </type>
     <type name="Wwm\Blog\Cms\WordPress\FileSystem\Theme\Locator">
         <arguments>
             <argument name="moduleName" xsi:type="string">Wwm_Blog</argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="common" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonFactory</item>
+                <item name="script" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\ScriptFactory</item>
+                <item name="common_late" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonLateFactory</item>
+                <item name="common_admin" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonAdminFactory</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonFactory">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="postLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">post_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\PostLinkFixHomeUrl</item>
+                </item>
+                <item name="pageLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">page_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\PageLinkFixHomeUrl</item>
+                </item>
+                <item name="pageNumberLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">get_pagenum_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\PageNumberLinkFixHomeUrl</item>
+                </item>
+                <item name="cancelCommentReplyFixLink" xsi:type="array">
+                    <item name="name" xsi:type="string">cancel_comment_reply_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\CancelCommentReplyFixLink</item>
+                </item>
+                <item name="commentFormAddRedirect" xsi:type="array">
+                    <item name="name" xsi:type="string">comment_form</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\CommentFormAddRedirect</item>
+                </item>
+                <item name="termLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">term_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\TermLinkFixHomeUrl</item>
+                </item>
+                <item name="addCommentReplyScript" xsi:type="array">
+                    <item name="name" xsi:type="string">wp_enqueue_scripts</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\AddCommentReplyScript</item>
+                </item>
+                <item name="documentTitleRemoveParts" xsi:type="array">
+                    <item name="name" xsi:type="string">document_title_parts</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\DocumentTitleRemoveParts</item>
+                </item>
+                <item name="navigationMarkupTemplate" xsi:type="array">
+                    <item name="name" xsi:type="string">navigation_markup_template</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\NavigationMarkupTemplate</item>
+                </item>
+                <item name="addHtmlCommentFormTop" xsi:type="array">
+                    <item name="name" xsi:type="string">comment_form_top</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\AddHtmlCommentFormTop</item>
+                </item>
+                <item name="customizeCommentFormDefaults" xsi:type="array">
+                    <item name="name" xsi:type="string">comment_form_defaults</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\CustomizeCommentFormDefaults</item>
+                </item>
+                <item name="customizeCommentFormDefaultFields" xsi:type="array">
+                    <item name="name" xsi:type="string">comment_form_default_fields</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\CustomizeCommentFormDefaultFields</item>
+                </item>
+                <item name="addHtmlCommentFormBottom" xsi:type="array">
+                    <item name="name" xsi:type="string">comment_form</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\AddHtmlCommentFormBottom</item>
+                </item>
+                <item name="canonicalFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">get_canonical_url</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\CanonicalFixHomeUrl</item>
+                </item>
+                <item name="canonicalRedirectFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">redirect_canonical</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\CanonicalRedirectFixHomeUrl</item>
+                </item>
+                <item name="passwordForm" xsi:type="array">
+                    <item name="name" xsi:type="string">the_password_form</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\PasswordForm</item>
+                </item>
+                <item name="sidebarRegisterLeft" xsi:type="array">
+                    <item name="name" xsi:type="string">widgets_init</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\SidebarRegisterLeft</item>
+                </item>
+                <item name="archiveLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">get_archives_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\ArchiveLinkFixHomeUrl</item>
+                </item>
+                <item name="yearLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">year_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\YearLinkFixHomeUrl</item>
+                </item>
+                <item name="monthLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">month_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\MonthLinkFixHomeUrl</item>
+                </item>
+                <item name="dayLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">day_link</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\DayLinkFixHomeUrl</item>
+                </item>
+                <item name="feedLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">wp_head</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FeedLinkFixHomeUrl</item>
+                </item>
+                <item name="shortLinkFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">get_shortlink</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\ShortLinkFixHomeUrl</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\ScriptFactory">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="optionHomeFixHomeUrl" xsi:type="array">
+                    <item name="name" xsi:type="string">option_home</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\OptionHomeFixHomeUrl</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonLateFactory">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="addCommentReplyScript" xsi:type="array">
+                    <item name="name" xsi:type="string">wp_enqueue_scripts</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\AddCommentReplyScript</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonAdminFactory">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="sidebarRegisterLeft" xsi:type="array">
+                    <item name="name" xsi:type="string">widgets_init</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\SidebarRegisterLeft</item>
+                </item>
+            </argument>
         </arguments>
     </type>
 </config>

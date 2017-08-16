@@ -13,8 +13,18 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress\Theme\Filters\Storage;
+namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
 
-class Globals extends \SplObjectStorage
+class PageNumberLinkFixHomeUrl extends AbstractFilter
 {
+    
+    public function filter($result)
+    {
+        return str_replace(
+            $this->entryPoint->getHomeURLOriginal(),
+            $this->entryPoint->getHomeURLNew(),
+            $result
+        );
+    }
+    
 }

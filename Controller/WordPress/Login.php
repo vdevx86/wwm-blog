@@ -16,6 +16,7 @@
 namespace Wwm\Blog\Controller\WordPress;
 
 use Wwm\Blog\Controller\Router;
+use Wwm\Blog\Cms\WordPress\Load\Type as LoadType;
 
 class Login extends \Magento\Framework\App\Action\Action
 {
@@ -43,7 +44,7 @@ class Login extends \Magento\Framework\App\Action\Action
         try {
             
             $this->wp->setQuery($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false))
-                ->setType(Router::LT_LOGIN)
+                ->setType(LoadType::LT_LOGIN)
                 ->load();
             
         } catch (\Exception $e) {

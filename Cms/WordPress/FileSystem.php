@@ -52,9 +52,20 @@ class FileSystem
         $this->driverFile = $driverFile;
     }
     
-    public function getLoadStatus() { return $this->loadStatus; }
-    public function getInstallationPath() { return $this->installationPath; }
-    public function getIncludePath() { return $this->includePath; }
+    public function getLoadStatus()
+    {
+        return $this->loadStatus;
+    }
+    
+    public function getInstallationPath()
+    {
+        return $this->installationPath;
+    }
+    
+    public function getIncludePath()
+    {
+        return $this->includePath;
+    }
     
     public function validateDirectory($path)
     {

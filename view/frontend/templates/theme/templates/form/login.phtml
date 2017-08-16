@@ -26,7 +26,7 @@
                 <button type="submit" id="<?php echo $theme->escAttr($templateParameters->getIdSubmit()); ?>" class="action submit login-submit primary">
                     <span><?php echo $theme->escAttr($templateParameters->getLabelLogIn()); ?></span>
                 </button>
-                <input type="hidden" name="redirect_to" value="<?php echo $theme->escUrl(str_replace($theme->getHomeURL(), $theme->getHomeURLNew(), $templateParameters->getRedirect())); ?>"/>
+                <input type="hidden" name="redirect_to" value="<?php echo $theme->escUrl(str_replace($theme->getHomeURLOriginal(), $theme->getHomeURLNew(), $templateParameters->getRedirect())); ?>"/>
             </div>
         </div>
         <?php $templateParameters->getBottom(); ?>

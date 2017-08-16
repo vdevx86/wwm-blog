@@ -13,8 +13,20 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress\Theme\Filters\Storage;
+// @codingStandardsIgnoreFile
 
-class Script extends \SplObjectStorage
+namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
+
+class OptionHomeFixHomeUrl extends AbstractFilter
 {
+    
+    public function filter($value, $option)
+    {
+        return str_replace(
+            $this->entryPoint->getHomeURLOriginal(),
+            $this->entryPoint->getHomeURLNew(),
+            $value
+        );
+    }
+    
 }

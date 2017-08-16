@@ -1,4 +1,4 @@
-<?php checkCompatibility(); global $theme; if ($theme->postPasswordRequired()) return; ?>
+<?php /* @codingStandardsIgnoreFile */ global $theme; if ($theme->postPasswordRequired()) return; ?>
 <section id="comments" class="comments-area">
     <?php if ($theme->isCommentsAvailable()): ?>
         <?php if ($theme->hasComments()): ?>

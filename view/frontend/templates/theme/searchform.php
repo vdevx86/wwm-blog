@@ -1,4 +1,4 @@
-<?php global $theme; $submitTitle = $theme->escAttrX('Search', 'submit button'); ?>
+<?php /* @codingStandardsIgnoreFile */ global $theme; $submitTitle = $theme->escAttrX('Search', 'submit button'); ?>
 <form action="<?php echo $theme->getHomeURLNew(); ?>/" class="search-form" role="search" data-hasrequired="<?php $theme->_e('* Required Fields'); ?>" novalidate="novalidate" data-mage-init='{"validation":{}}'>
     <fieldset class="fieldset">
         <div class="field search required">

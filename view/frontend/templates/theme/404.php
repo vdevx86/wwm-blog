@@ -1,4 +1,4 @@
-<?php checkCompatibility(); global $theme; ?>
+<?php /* @codingStandardsIgnoreFile */ global $theme; ?>
 <section id="blog" <?php $theme->bodyClass(); ?>>
     <article>
         <div class="post-content">

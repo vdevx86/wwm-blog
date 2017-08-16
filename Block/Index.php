@@ -19,20 +19,22 @@ class Index extends \Magento\Framework\View\Element\Template
 {
     
     protected $wp;
+    protected $entryPoint;
     
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Wwm\Blog\Cms\WordPress $wp,
+        \Wwm\Blog\Cms\WordPress\EntryPoint $entryPoint,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->wp = $wp;
+        $this->entryPoint = $entryPoint;
     }
     
     protected function _prepareLayout()
     {
-        $theme = $this->wp->getTheme();
-        $this->pageConfig->getTitle()->set($theme->wpGetDocumentTitle());
+        $this->pageConfig->getTitle()->set($this->entryPoint->wpGetDocumentTitle());
         return parent::_prepareLayout();
     }
     

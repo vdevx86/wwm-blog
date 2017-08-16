@@ -15,34 +15,44 @@
 
 namespace Wwm\Blog\Observer\Page;
 
-use Magento\Framework\Event\Observer;
-use Magento\Framework\Data\Tree\Node;
-use Wwm\Blog\Helper\Config;
-
 class AddBlogLink implements \Magento\Framework\Event\ObserverInterface
 {
     
+    const NODE_ID = 'wwm';
+    
     protected $config;
+    protected $nodeFactory;
     
     public function __construct(
-        Config $config
+        \Wwm\Blog\Helper\Config $config,
+        \Magento\Framework\Data\Tree\NodeFactory $nodeFactory
     ) {
         $this->config = $config;
+        $this->nodeFactory = $nodeFactory;
     }
     
-    public function execute(Observer $observer)
+    public function execute(\Magento\Framework\Event\Observer $observer)
     {
         
-        if ($this->config->isMainMenuAdd()) {
+        if (
+                $this->config->isModuleEnabled()
+            &&  $this->config->isMainMenuAdd()
+        ) {
             
             $menu = $observer->getMenu();
-            $menu->addChild(new Node([
-                'name' => __($this->config->getMainMenuTitle()),
-                'id' => Config::XML_PATH_MAINMENU_ADD,
-                'url' => $this->config->getBaseUrl(),
-                'has_active' => false,
-                'is_active' => false
-            ], 'id', $menu->getTree(), $menu));
+            $node = $this->nodeFactory->create([
+                'data' => [
+                    'name' => __($this->config->getMainMenuTitle()),
+                    'url' => $this->config->getBaseUrl(),
+                    'has_active' => false,
+                    'is_active' => false
+                ],
+                'idField' => static::NODE_ID,
+                'tree' => $menu->getTree(),
+                'parent' => $menu
+            ]);
+            
+            $menu->addChild($node);
             
         }
         

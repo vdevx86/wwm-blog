@@ -13,6 +13,8 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Wwm\Blog\Block\System\Config\Form\Field\Button;
 
 class ThemeInstall extends \Magento\Config\Block\System\Config\Form\Field

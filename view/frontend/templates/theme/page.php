@@ -1,4 +1,4 @@
-<?php checkCompatibility(); global $theme; ?>
+<?php /* @codingStandardsIgnoreFile */ global $theme; ?>
 <section id="blog" <?php $theme->bodyClass(); ?>>
     <?php if ($theme->havePosts()): $theme->thePost(); ?>
     <article id="post-<?php $theme->theId(); ?>" <?php $theme->postClass(); ?>>

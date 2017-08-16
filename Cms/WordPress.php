@@ -17,18 +17,14 @@
 
 namespace Wwm\Blog\Cms;
 
-use Wwm\Blog\Controller\Router;
+use Wwm\Blog\Cms\WordPress\Load\Type as LoadType;
 use Wwm\Blog\Cms\WordPress\Theme;
 
 use Magento\Framework\HTTP\ZendClient as HTTPClient;
-
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\State\InitException;
 
 final class WordPress
 {
-    
-    const THEME = 'wwm';
     
     const STATE_INIT = 0;
     const STATE_PROGRESS = 1;
@@ -38,15 +34,13 @@ final class WordPress
     protected $config;
     protected $fileSystem;
     protected $patch;
-    protected $composerFs;
-    protected $themeLocator;
     
     protected $bootstrap = false;
     protected $state = self::STATE_INIT;
     
     protected $theme = null;
     protected $query = null;
-    protected $type = Router::LT_DEFAULT;
+    protected $type = LoadType::LT_DEFAULT;
     protected $result = null;
     
     protected $filterInit;
@@ -57,8 +51,6 @@ final class WordPress
         \Wwm\Blog\Helper\Config $config,
         WordPress\FileSystem $fileSystem,
         WordPress\FileSystem\File\Patch $patch,
-        \Composer\Util\Filesystem $composerFs,
-        \Wwm\Blog\Cms\WordPress\FileSystem\Theme\Locator $themeLocator,
         $filterInit,
         $themeInit
     ) {
@@ -66,8 +58,6 @@ final class WordPress
         $this->config = $config;
         $this->fileSystem = $fileSystem;
         $this->patch = $patch;
-        $this->composerFs = $composerFs;
-        $this->themeLocator = $themeLocator;
         $this->filterInit = $filterInit;
         $this->themeInit = $themeInit;
     }
@@ -155,14 +145,21 @@ final class WordPress
         global $theme;
         $theme = $this->theme = $this->context->getObjectManager()
             ->create(\Wwm\Blog\Cms\WordPress\ThemeInterface::class);
-        $theme->setHomeURL($theme->homeUrl())
-            ->setHomeURLNew($this->config->getBaseUrlFrontend() . $this->config->getRouteName());
         
-        if ($this->type == Router::LT_LOGIN) {
-            $theme->enableScriptFilters();
+        $theme->setHomeURLOriginal($theme->homeUrl());
+        $theme->setHomeURLNew($this->config->getBaseUrlFrontend() . $this->config->getRouteName());
+        
+        $theme->initFilterGlobals();
+        $theme->removeHeadActions();
+        $theme->enableThemeFeatures();
+        $theme->loadThemeTextdomain($theme->getOptions()->getTextDomain());
+        $theme->initImageSizes();
+        
+        if ($this->type == LoadType::LT_LOGIN) {
+            $theme->getHookStorageGroup()->getScript()->create();
         } else {
             define('WP_USE_THEMES', true);
-            $theme->enableGlobalFilters();
+            $theme->getHookStorageGroup()->getCommon()->create();
         }
         
         return $this;
@@ -218,12 +215,14 @@ final class WordPress
                     list($server, $get, $post) = [$_SERVER, $_GET, $_POST];
                     $this->initSuperglobals();
                     
-                    require_once ABSPATH . $fileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR . $fileSystem::FN_PLUGIN . $fileSystem::FN_EXT;
+                    require_once ABSPATH . $fileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR .
+                        $fileSystem::FN_PLUGIN . $fileSystem::FN_EXT;
+                    
                     add_filter($this->filterInit, [$this, $this->themeInit], 10, 0);
                     eval($file);
                     remove_filter($this->filterInit, [$this, $this->themeInit]);
                     
-                    if ($this->type == Router::LT_LOGIN) {
+                    if ($this->type == LoadType::LT_LOGIN) {
                         if ($file = $patch->getPatchedFile($patch::PT_LOGIN)) {
                             eval($file);
                         }
@@ -233,7 +232,8 @@ final class WordPress
                         wp();
                         
                         if (!$this->getBootstrap()) {
-                            $this->theme->enableLateGlobalFilters()->includeTemplateLoader();
+                            $this->theme->getHookStorageGroup()->getCommonLate()->create();
+                            $this->theme->includeTemplateLoader();
                             $this->result = ob_get_contents();
                         }
                         
@@ -250,29 +250,6 @@ final class WordPress
         
         if ($this->state != self::STATE_SUCCESS) {
             throw new InitException(__('Could not initialize WordPress environment'));
-        }
-        
-        return $this;
-        
-    }
-    
-    public function installTheme()
-    {
-        
-        $this->checkSuccessState();
-        
-        $to = get_theme_root() . DIRECTORY_SEPARATOR . self::THEME;
-        if ($this->composerFs->isSymlinkedDirectory($to)) {
-            $this->composerFs->unlink($to);
-        }
-        
-        $from = $this->themeLocator->getLocation();
-        if (!$this->composerFs->relativeSymlink($from, $to)) {
-            throw new FileSystemException(__(
-                'Could not install WordPress theme. Error creating symlink: %1 => %2',
-                $from,
-                $to
-            ));
         }
         
         return $this;

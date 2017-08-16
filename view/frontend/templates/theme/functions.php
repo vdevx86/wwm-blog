@@ -15,7 +15,9 @@
 
 // @codingStandardsIgnoreFile
 
-if (is_admin()) {
+$basePath = DIRECTORY_SEPARATOR . basename(ABSPATH) . DIRECTORY_SEPARATOR;
+
+if (strpos($_SERVER['REQUEST_URI'], $basePath . 'wp-admin') === 0) {
     
     $bootstrap = function() {
         
@@ -71,7 +73,15 @@ if (is_admin()) {
             
             global $theme;
             $theme = $objectManager->get(\Wwm\Blog\Cms\WordPress\ThemeInterface::class);
-            $theme->enableAdminGlobalFilters();
+            
+            $theme->initFilterGlobals();
+            $theme->removeHeadActions();
+            $theme->enableThemeFeatures();
+            $theme->loadThemeTextdomain($theme->getOptions()->getTextDomain());
+            $theme->initImageSizes();
+            $theme->enableThemeFeatures();
+            
+            $theme->getHookStorageGroup()->getCommonAdmin()->create();
             
         };
         
@@ -85,13 +95,10 @@ if (is_admin()) {
     $bootstrap();
     unset($bootstrap);
     
-} else {
+} elseif (strpos($_SERVER['REQUEST_URI'], $basePath . 'wp-login.php') !== 0) {
     
-    function checkCompatibility()
-    {
-        if (!defined('VENDOR_PATH')) {
-            wp_die(__('This theme is not designed to run separately without Magento 2 environment'));
-        }
+    if (!defined('VENDOR_PATH')) {
+        wp_die(__('This theme is not designed to run separately without Magento 2 environment'));
     }
     
 }

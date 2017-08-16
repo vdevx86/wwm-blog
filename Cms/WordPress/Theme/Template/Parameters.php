@@ -15,6 +15,39 @@
 
 namespace Wwm\Blog\Cms\WordPress\Theme\Template;
 
-class Parameters extends \Magento\Framework\DataObject
+class Parameters
 {
+    
+    const KEY = 'template_parameters';
+    
+    protected $registry;
+    
+    public function __construct(
+        \Magento\Framework\Registry $registry
+    ) {
+        $this->registry = $registry;
+    }
+    
+    public function getRegistry()
+    {
+        return $this->registry;
+    }
+    
+    public function get()
+    {
+        return $this->registry->registry(static::KEY);
+    }
+    
+    public function set(\Magento\Framework\DataObject $templateParameters)
+    {
+        $this->registry->register(static::KEY, $templateParameters, true);
+        return $this;
+    }
+    
+    public function clear()
+    {
+        $this->registry->unregister(static::KEY);
+        return $this;
+    }
+    
 }

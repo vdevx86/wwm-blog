@@ -15,15 +15,14 @@
 
 namespace Wwm\Blog\Helper;
 
-use Magento\Store\Model\ScopeInterface;
-use Wwm\Blog\Controller\Router;
-
 class Config
 {
     
     const XML_PATH_STATUS = 'wwm_blog/general/status';
     const XML_PATH_INSTALLATION_PATH = 'wwm_blog/general/path';
     const XML_PATH_ROUTE_NAME = 'wwm_blog/general/route';
+    
+    const ROUTER_NAME_DEFAULT = 'blog';
     
     const XML_PATH_MAINMENU_ADD = 'wwm_blog/mainmenu/add';
     const XML_PATH_MAINMENU_TITLE = 'wwm_blog/mainmenu/title';
@@ -63,7 +62,7 @@ class Config
         if ($this->routeName === null) {
             $routeName = $this->scopeConfig->getValue(static::XML_PATH_ROUTE_NAME);
             if (!$routeName) {
-                $routeName = Router::ROUTER_NAME_DEFAULT;
+                $routeName = static::ROUTER_NAME_DEFAULT;
             }
             $this->routeName = $routeName;
         }
@@ -79,21 +78,28 @@ class Config
     public function getBaseUrl()
     {
         if ($this->baseUrl === null) {
-            $this->baseUrl = $this->getBaseUrlFrontend() . $this->getRouteName() . Router::URI_DELIMITER;
+            $this->baseUrl = $this->getBaseUrlFrontend() . $this->getRouteName() .
+                \Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface::DELIMITER;
         }
         return $this->baseUrl;
     }
     
     public function isMainMenuAdd()
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_MAINMENU_ADD, ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->getValue(
+            static::XML_PATH_MAINMENU_ADD,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
     }
     
     public function getMainMenuTitle()
     {
-        $title = $this->scopeConfig->getValue(static::XML_PATH_MAINMENU_TITLE, ScopeInterface::SCOPE_STORE);
+        $title = $this->scopeConfig->getValue(
+            static::XML_PATH_MAINMENU_TITLE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         if (!$title) {
-            $title = static::MAINMENU_TITLE_DEFAULT;
+            $title = __(static::MAINMENU_TITLE_DEFAULT);
         }
         return $title;
     }
