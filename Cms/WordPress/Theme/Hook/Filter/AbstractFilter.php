@@ -17,10 +17,4 @@ namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
 
 abstract class AbstractFilter extends \Wwm\Blog\Cms\WordPress\Theme\AbstractHook
 {
-    
-    public function filter()
-    {
-        throw new \LogicException('Method should be overridden in descendants');
-    }
-    
 }
