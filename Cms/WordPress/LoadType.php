@@ -13,15 +13,10 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress\Load;
+namespace Wwm\Blog\Cms\WordPress;
 
-use Wwm\Blog\Cms\WordPress\FileSystem;
-
-class Type
+class LoadType implements LoadTypeInterface
 {
-    
-    const LT_DEFAULT = 0;
-    const LT_LOGIN = 1;
     
     protected $config;
     protected $uriParser;
@@ -39,15 +34,42 @@ class Type
     
     protected function _construct()
     {
+        $this->parse();
+    }
+    
+    public function parse()
+    {
         $query = $this->uriParser->getQuery();
         if (strpos($query, FileSystem::FN_LOGIN . FileSystem::FN_EXT) === 0) {
-            $this->type = static::LT_LOGIN;
+            $this->type = self::LT_LOGIN;
         }
+        return $this;
     }
     
     public function getType()
     {
         return $this->type;
+    }
+    
+    public function isDefault()
+    {
+        return $this->type == self::LT_DEFAULT;
+    }
+    
+    public function isLogin()
+    {
+        return $this->type == self::LT_LOGIN;
+    }
+    
+    public function toFileName()
+    {
+        if ($this->type == self::LT_LOGIN) {
+            $result = FileSystem::FN_LOGIN;
+        } else {
+            $result = FileSystem::FN_INDEX;
+        }
+        $result .= FileSystem::FN_EXT;
+        return $result;
     }
     
 }

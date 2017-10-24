@@ -34,7 +34,10 @@ class Locator
     public function getLocation()
     {
         return implode(DIRECTORY_SEPARATOR, [
-            $this->moduleReader->getModuleDir(Dir::MODULE_VIEW_DIR, $this->moduleName),
+            $this->moduleReader->getModuleDir(
+                Dir::MODULE_VIEW_DIR,
+                $this->moduleName
+            ),
             'frontend',
             'templates',
             'theme'

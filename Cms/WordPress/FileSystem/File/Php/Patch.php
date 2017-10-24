@@ -13,12 +13,12 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress\FileSystem\File;
+namespace Wwm\Blog\Cms\WordPress\FileSystem\File\Php;
 
 use Magento\Framework\Exception\FileSystemException;
 use Wwm\Blog\Cms\WordPress\FileSystem;
 
-class Patch extends \Wwm\Blog\Cms\WordPress\FileSystem\File
+class Patch extends \Wwm\Blog\Cms\WordPress\FileSystem\File\Php
 {
     
     const PT_CONFIG = 0;
@@ -61,7 +61,7 @@ class Patch extends \Wwm\Blog\Cms\WordPress\FileSystem\File
         
         $result = false;
         
-        if ($content = $this->readPhpFile(FileSystem::FN_CONFIG)) {
+        if ($content = $this->readFile(FileSystem::FN_CONFIG)) {
             if ($content = $this->patch($content, ['require_once', 'include_once', 'require', 'include'])) {
                 $result = $content;
             } else {
@@ -81,7 +81,7 @@ class Patch extends \Wwm\Blog\Cms\WordPress\FileSystem\File
         
         $result = false;
         
-        if ($content = $this->readPhpFile(FileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR . FileSystem::FN_TRANSLATE)) {
+        if ($content = $this->readFile(FileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR . FileSystem::FN_TRANSLATE)) {
             if ($content = $this->patch($content, 'function __(', 'function ___(')) {
                 $result = $content;
             } else {
@@ -101,7 +101,7 @@ class Patch extends \Wwm\Blog\Cms\WordPress\FileSystem\File
         
         $result = false;
         
-        if ($content = $this->readPhpFile(FileSystem::FN_SETTINGS)) {
+        if ($content = $this->readFile(FileSystem::FN_SETTINGS)) {
             $content = $this->patch(
                 $content,
                 'require_once( ABSPATH . WPINC . \'/' .FileSystem::FN_TRANSLATE . FileSystem::FN_EXT . '\' );'
@@ -125,7 +125,7 @@ class Patch extends \Wwm\Blog\Cms\WordPress\FileSystem\File
         
         $result = false;
         
-        if ($content = $this->readPhpFile(FileSystem::FN_LOGIN)) {
+        if ($content = $this->readFile(FileSystem::FN_LOGIN)) {
             $content = $this->patch(
                 $content,
                 'require( dirname(__FILE__) . \'/' . FileSystem::FN_LOAD . FileSystem::FN_EXT . '\' );'
@@ -144,7 +144,7 @@ class Patch extends \Wwm\Blog\Cms\WordPress\FileSystem\File
         
     }
     
-    public function getPatchedFile($patchType)
+    public function getFile($patchType)
     {
         
         $result = false;

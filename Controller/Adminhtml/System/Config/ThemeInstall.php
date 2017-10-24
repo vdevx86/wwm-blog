@@ -20,17 +20,20 @@ class ThemeInstall extends \Magento\Backend\App\Action
     
     protected $resultJsonFactory;
     protected $wp;
-    protected $themeInstaller;
+    protected $themeInstall;
+    protected $bootstrapMode;
     
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Wwm\Blog\Cms\WordPress $wp,
-        \Wwm\Blog\Cms\WordPress\FileSystem\Theme\Installer $themeInstaller
+        \Wwm\Blog\Cms\WordPress\FileSystem\Theme\Install $themeInstall,
+        \Wwm\Blog\Cms\WordPress\Bootstrap\Mode $bootstrapMode
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->wp = $wp;
-        $this->themeInstaller = $themeInstaller;
+        $this->themeInstall = $themeInstall;
+        $this->bootstrapMode = $bootstrapMode;
         parent::__construct($context);
     }
     
@@ -41,8 +44,9 @@ class ThemeInstall extends \Magento\Backend\App\Action
         
         try {
             
-            $this->wp->setBootstrap(true)->load();
-            $this->themeInstaller->install();
+            $this->bootstrapMode->enable();
+            $this->wp->load();
+            $this->themeInstall->install();
             
             $result = __('Theme installed successfully');
             

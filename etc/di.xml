@@ -16,12 +16,76 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Wwm\Blog\Cms\CmsInterface" type="Wwm\Blog\Cms\WordPress"/>
     <preference for="Wwm\Blog\Cms\WordPress\ThemeInterface" type="Wwm\Blog\Cms\WordPress\Theme"/>
     <preference for="Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface" type="Wwm\Blog\Magento\Framework\App\Request\Http\Uri\Parser"/>
-    <type name="Wwm\Blog\Cms\WordPress">
+    <type name="Wwm\Blog\Cms\WordPress\Bootstrap">
         <arguments>
-            <argument name="filterInit" xsi:type="string">muplugins_loaded</argument>
-            <argument name="themeInit" xsi:type="string">loadTheme</argument>
+            <argument name="moduleName" xsi:type="string">Wwm_Blog</argument>
+            <argument name="items" xsi:type="array">
+                <item name="essentials" xsi:type="object">Wwm\Blog\Cms\WordPress\Bootstrap\File\EssentialsFactory</item>
+                <item name="main" xsi:type="object">Wwm\Blog\Cms\WordPress\Bootstrap\File\MainFactory</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Bootstrap\File\EssentialsFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Wwm\Blog\Cms\WordPress\Bootstrap\File\Essentials</argument>
+            <argument name="data" xsi:type="array">
+                <item name="hash" xsi:type="string">5HWmISQmtRlEtHxT67V0IYWnrNPNYdeH</item>
+                <item name="source" xsi:type="string">bootstrap/file/essentials</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Bootstrap\File\MainFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Wwm\Blog\Cms\WordPress\Bootstrap\File\Main</argument>
+            <argument name="data" xsi:type="array">
+                <item name="hash" xsi:type="string">7aLL8oUUuu6KpAYx3zVScqPqHBYI6P1g</item>
+                <item name="source" xsi:type="string">bootstrap/file/main</item>
+                <item name="dataProvider" xsi:type="object">Wwm\Blog\Cms\WordPress\Bootstrap\File\Main\MainFileDataProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap">
+        <arguments>
+            <argument name="moduleName" xsi:type="string">Wwm_Blog</argument>
+            <argument name="items" xsi:type="array">
+                <item name="functions" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\FunctionsFactory</item>
+                <item name="index" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\IndexFactory</item>
+                <item name="stylesheet" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\StylesheetFactory</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\FunctionsFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\Functions</argument>
+            <argument name="data" xsi:type="array">
+                <item name="hash" xsi:type="string">eAHUCEn3DnVeqw7wLHutVX73u69BurFg</item>
+                <item name="source" xsi:type="string">theme/install/bootstrap/file/functions</item>
+                <item name="dataProvider" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\Functions\FunctionsFileDataProvider</item>
+                <item name="destination" xsi:type="string">functions.php</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\IndexFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\Index</argument>
+            <argument name="data" xsi:type="array">
+                <item name="hash" xsi:type="string">Bv0sYwnVyaNJsQeUr23q8xX4sz0dRCBv</item>
+                <item name="source" xsi:type="string">theme/install/bootstrap/file/index</item>
+                <item name="destination" xsi:type="string">index.php</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\StylesheetFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\Stylesheet</argument>
+            <argument name="data" xsi:type="array">
+                <item name="hash" xsi:type="string">ubbkWw4ZBdpiv0Tm3v3ifMYam2orusC1</item>
+                <item name="source" xsi:type="string">theme/install/bootstrap/file/style</item>
+                <item name="destination" xsi:type="string">style.css</item>
+            </argument>
         </arguments>
     </type>
     <type name="Wwm\Blog\Cms\WordPress\Theme\LayerFactory">
@@ -62,7 +126,6 @@
             <argument name="data" xsi:type="array">
                 <item name="common" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonFactory</item>
                 <item name="script" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\ScriptFactory</item>
-                <item name="common_late" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonLateFactory</item>
                 <item name="common_admin" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonAdminFactory</item>
             </argument>
         </arguments>
@@ -171,16 +234,6 @@
                 <item name="optionHomeFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">option_home</item>
                     <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\OptionHomeFixHomeUrl</item>
-                </item>
-            </argument>
-        </arguments>
-    </type>
-    <type name="Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group\CommonLateFactory">
-        <arguments>
-            <argument name="filters" xsi:type="array">
-                <item name="addCommentReplyScript" xsi:type="array">
-                    <item name="name" xsi:type="string">wp_enqueue_scripts</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\AddCommentReplyScript</item>
                 </item>
             </argument>
         </arguments>

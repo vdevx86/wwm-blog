@@ -15,13 +15,29 @@
 
 namespace Wwm\Blog\Block\Widget;
 
-class Sidebar extends \Magento\Framework\View\Element\Template implements \Magento\Widget\Block\BlockInterface
+class Sidebar extends \Magento\Framework\View\Element\Template
 {
+    
+    protected $themeFactory;
+    
+    public function __construct(
+        \Magento\Framework\View\Element\Template\Context $context,
+        \Wwm\Blog\Cms\WordPress\ThemeFactory $themeFactory,
+        array $data = []
+    ) {
+        $this->themeFactory = $themeFactory;
+        parent::__construct($context, $data);
+    }
     
     public function _construct()
     {
         parent::_construct();
         $this->setTemplate('widget/sidebar.phtml');
+    }
+    
+    public function getTheme()
+    {
+        return $this->themeFactory->create();
     }
     
 }

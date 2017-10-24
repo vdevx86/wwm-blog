@@ -13,8 +13,8 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group;
+namespace Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File;
 
-class CommonLate extends \Wwm\Blog\Cms\WordPress\Theme\Hook\Storage
+class Index extends \Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File
 {
 }

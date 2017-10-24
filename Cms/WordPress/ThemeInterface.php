@@ -18,6 +18,9 @@ namespace Wwm\Blog\Cms\WordPress;
 interface ThemeInterface
 {
     
+    const NAME_PARENT = 'wwm-basic';
+    const NAME = 'wwm';
+    
     const AREA_CODE = 'frontend';
     const TEXT_DOMAIN_DEFAULT = 'default';
     

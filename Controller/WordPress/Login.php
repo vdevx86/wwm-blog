@@ -16,7 +16,6 @@
 namespace Wwm\Blog\Controller\WordPress;
 
 use Wwm\Blog\Controller\Router;
-use Wwm\Blog\Cms\WordPress\Load\Type as LoadType;
 
 class Login extends \Magento\Framework\App\Action\Action
 {
@@ -24,15 +23,18 @@ class Login extends \Magento\Framework\App\Action\Action
     protected $context;
     protected $forwardFactory;
     protected $wp;
+    protected $query;
     
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\ForwardFactory $forwardFactory,
-        \Wwm\Blog\Cms\WordPress $wp
+        \Wwm\Blog\Cms\WordPress $wp,
+        \Wwm\Blog\Cms\WordPress\Query $query
     ) {
         $this->context = $context;
         $this->forwardFactory = $forwardFactory;
         $this->wp = $wp;
+        $this->query = $query;
         parent::__construct($context);
     }
     
@@ -43,16 +45,23 @@ class Login extends \Magento\Framework\App\Action\Action
         
         try {
             
-            $this->wp->setQuery($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false))
-                ->setType(LoadType::LT_LOGIN)
-                ->load();
+            $query = $this->getRequest()->getParam(
+                Router::ROUTER_PARAMETER,
+                false
+            );
+            
+            $this->query->set($query);
+            $this->wp->load();
             
         } catch (\Exception $e) {
             
-            $this->context->getMessageManager()->addError($e->getMessage());
-            $this->getRequest()->setRequestUri('')->setDispatched(false);
+            $this->context->getMessageManager()
+                ->addError($e->getMessage());
+            $this->getRequest()->setRequestUri('')
+                ->setDispatched(false);
             
-            $result = $this->forwardFactory->create()->forward('noroute');
+            $result = $this->forwardFactory->create()
+                ->forward('noroute');
             
         }
         

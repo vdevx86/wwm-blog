@@ -21,8 +21,6 @@ use Wwm\Blog\Cms\WordPress\FileSystem;
 class File
 {
     
-    const FNPART_PHPTAG = '<?php';
-    
     protected $fileSystem;
     protected $driverFile;
     
@@ -34,21 +32,7 @@ class File
         $this->driverFile = $driverFile;
     }
     
-    public static function removePhpTag($content)
-    {
-        
-        if (strpos($content, static::FNPART_PHPTAG) === 0) {
-            $I = 5;
-            do {
-                $content[--$I] = ' ';
-            } while ($I);
-        }
-        
-        return $content;
-        
-    }
-    
-    public function readPhpFile($fileName)
+    public function readFile($fileName)
     {
         
         $fileName .= FileSystem::FN_EXT;
@@ -60,7 +44,7 @@ class File
             throw new FileSystemException(__('Error reading WordPress file: %1', $fileName));
         }
         
-        return static::removePhpTag($content);
+        return $content;
         
     }
     

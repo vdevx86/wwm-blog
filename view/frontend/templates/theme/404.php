@@ -1,4 +1,4 @@
-<?php /* @codingStandardsIgnoreFile */ global $theme; ?>
+<?php $theme = \Wwm\Blog\Cms\WordPress\ThemeFactory::getInstance(); ?>
 <section id="blog" <?php $theme->bodyClass(); ?>>
     <article>
         <div class="post-content">

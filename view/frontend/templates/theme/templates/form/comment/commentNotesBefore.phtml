@@ -1,4 +1,4 @@
-<?php global $theme; ?>
+<?php $theme = \Wwm\Blog\Cms\WordPress\ThemeFactory::getInstance(); ?>
 <legend class="legend comment-notes">
     <span id="email-notes"><?php $theme->_e('Your email address will not be published.'); ?></span>
     <?php if ($theme->getOption('require_name_email')): ?>

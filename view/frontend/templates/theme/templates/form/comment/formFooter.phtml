@@ -1,2 +1,2 @@
-<?php global $theme; ?>
+<?php $theme = \Wwm\Blog\Cms\WordPress\ThemeFactory::getInstance(); ?>
 <input type="hidden" name="redirect_to" value="<?php echo $theme->getPermalink($theme->getTemplateParameters()->getPostId()); ?>"/>

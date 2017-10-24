@@ -1,4 +1,5 @@
-<?php global $theme; $templateParameters = $theme->getTemplateParameters(); ?>
+<?php $theme = \Wwm\Blog\Cms\WordPress\ThemeFactory::getInstance(); ?>
+<?php $templateParameters = $theme->getTemplateParameters(); ?>
 <?php $requireNameAndEmail = $templateParameters->getRequireNameAndEmail(); ?>
 <div class="field comment-form-email<?php if ($requireNameAndEmail): ?> required<?php endif; ?>">
     <label class="label" for="email"><span><?php $theme->_e('Email'); ?></span></label>

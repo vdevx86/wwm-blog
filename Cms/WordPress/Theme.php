@@ -13,30 +13,32 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress;
 
-class Theme implements ThemeInterface
+class Theme extends Renderer implements ThemeInterface
 {
     
-    const NAME = 'wwm';
-    
+    protected $objectManager;
     protected $context;
     protected $registry;
     protected $entryPoint;
     protected $options;
+    protected $initState = false;
     
     public function __construct(
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Registry $registry,
         EntryPoint $entryPoint,
-        Theme\Options $options
+        Theme\Options $options,
+        FileSystem $fileSystem
     ) {
+        $this->objectManager = $objectManager;
         $this->context = $context;
         $this->registry = $registry;
         $this->entryPoint = $entryPoint;
         $this->options = $options;
+        parent::__construct($objectManager, $fileSystem);
     }
     
     public function getContext()
@@ -54,13 +56,18 @@ class Theme implements ThemeInterface
         return $this->options;
     }
     
-    public function includeTemplateLoader()
+    public function getInitState()
     {
-        require_once ABSPATH . WPINC . DIRECTORY_SEPARATOR . FileSystem::FN_TPLDR . FileSystem::FN_EXT;
+        return $this->initState;
+    }
+    
+    public function setInitState()
+    {
+        $this->initState = true;
         return $this;
     }
     
-    public function __call($name, array $args)
+    public function __call($name, $args)
     {
         return $this->entryPoint->{$name}(...$args);
     }

@@ -21,17 +21,11 @@ function __(...$argc)
     $text = array_shift($argc);
     
     if (defined('ABSPATH')) {
-        if (
-                strpos(debug_backtrace(2, 1)[0]['file'], ABSPATH, 0) === 0
-            &&  function_exists('___')
-        ) {
-            
-            if (!isset($argc[0]) || !is_string($argc[0])) {
-                $argc[0] = 'default';
+        if (strpos(debug_backtrace(2, 1)[0]['file'], ABSPATH, 0) === 0) {
+            if (isset($argc[0]) && is_string($argc[0])) {
+                return ___($text, $argc[0]);
             }
-            
-            return ___($text, $argc[0]);
-            
+            return ___($text);
         }
     }
     

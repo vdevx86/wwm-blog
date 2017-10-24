@@ -15,7 +15,7 @@
 
 namespace Wwm\Blog\Controller;
 
-use Wwm\Blog\Cms\WordPress\Load\Type as LoadType;
+use Wwm\Blog\Cms\WordPress\LoadType;
 
 class Router implements \Magento\Framework\App\RouterInterface
 {

@@ -14,6 +14,5 @@
  */
 
 if ($sidebarId = $block->getSidebarId()) {
-    global $theme;
-    $theme->dynamicSidebar($sidebarId);
+    $block->getTheme()->dynamicSidebar($sidebarId);
 }

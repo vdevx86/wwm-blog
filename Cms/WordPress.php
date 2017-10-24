@@ -13,247 +13,65 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms;
 
-use Wwm\Blog\Cms\WordPress\Load\Type as LoadType;
-use Wwm\Blog\Cms\WordPress\Theme;
-
-use Magento\Framework\HTTP\ZendClient as HTTPClient;
-use Magento\Framework\Exception\State\InitException;
-
-final class WordPress
+final class WordPress implements CmsInterface
 {
     
-    const STATE_INIT = 0;
-    const STATE_PROGRESS = 1;
-    const STATE_SUCCESS = 2;
-    
-    protected $context;
-    protected $config;
+    protected $entryPoint;
+    protected $bootstrap;
+    protected $themeFactory;
     protected $fileSystem;
-    protected $patch;
+    protected $loadType;
+    protected $bootstrapMode;
     
-    protected $bootstrap = false;
-    protected $state = self::STATE_INIT;
-    
-    protected $theme = null;
-    protected $query = null;
-    protected $type = LoadType::LT_DEFAULT;
-    protected $result = null;
-    
-    protected $filterInit;
-    protected $themeInit;
+    protected $result = false;
     
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Wwm\Blog\Helper\Config $config,
+        WordPress\EntryPoint $entryPoint,
+        WordPress\Bootstrap $bootstrap,
+        WordPress\ThemeFactory $themeFactory,
         WordPress\FileSystem $fileSystem,
-        WordPress\FileSystem\File\Patch $patch,
-        $filterInit,
-        $themeInit
+        WordPress\LoadType $loadType,
+        WordPress\Bootstrap\Mode $bootstrapMode
     ) {
-        $this->context = $context;
-        $this->config = $config;
-        $this->fileSystem = $fileSystem;
-        $this->patch = $patch;
-        $this->filterInit = $filterInit;
-        $this->themeInit = $themeInit;
-    }
-    
-    public function checkInitState()
-    {
-        if ($this->state != self::STATE_INIT) {
-            throw new \LogicException('Method availability: only before initialization');
-        }
-        return $this;
-    }
-    
-    public function checkProgressState()
-    {
-        if ($this->state != self::STATE_PROGRESS) {
-            throw new \LogicException('Method availability: only during initialization');
-        }
-        return $this;
-    }
-    
-    public function checkSuccessState()
-    {
-        if ($this->state != self::STATE_SUCCESS) {
-            throw new \LogicException('Method availability: only after initialization');
-        }
-        return $this;
-    }
-    
-    public function setBootstrap($bootstrap)
-    {
-        $this->checkInitState();
+        $this->entryPoint = $entryPoint;
         $this->bootstrap = $bootstrap;
-        return $this;
-    }
-    
-    public function getBootstrap()
-    {
-        return $this->bootstrap;
-    }
-    
-    public function getState()
-    {
-        return $this->state;
-    }
-    
-    public function getTheme()
-    {
-        return $this->theme;
-    }
-    
-    public function setQuery($query)
-    {
-        $this->checkInitState();
-        $this->query = $query;
-        return $this;
-    }
-    
-    public function getQuery()
-    {
-        return $this->query;
-    }
-    
-    public function setType($type)
-    {
-        $this->checkInitState();
-        $this->type = $type;
-        return $this;
-    }
-    
-    public function getType()
-    {
-        return $this->type;
-    }
-    
-    public function getQueryResult()
-    {
-        return $this->result;
-    }
-    
-    public function loadTheme()
-    {
-        
-        $this->checkProgressState();
-        
-        global $theme;
-        $theme = $this->theme = $this->context->getObjectManager()
-            ->create(\Wwm\Blog\Cms\WordPress\ThemeInterface::class);
-        
-        $theme->setHomeURLOriginal($theme->homeUrl());
-        $theme->setHomeURLNew($this->config->getBaseUrlFrontend() . $this->config->getRouteName());
-        
-        $theme->initFilterGlobals();
-        $theme->removeHeadActions();
-        $theme->enableThemeFeatures();
-        $theme->loadThemeTextdomain($theme->getOptions()->getTextDomain());
-        $theme->initImageSizes();
-        
-        if ($this->type == LoadType::LT_LOGIN) {
-            $theme->getHookStorageGroup()->getScript()->create();
-        } else {
-            define('WP_USE_THEMES', true);
-            $theme->getHookStorageGroup()->getCommon()->create();
-        }
-        
-        return $this;
-        
-    }
-    
-    public function initSuperglobals()
-    {
-        
-        $this->checkProgressState();
-        
-        $installationPath = DIRECTORY_SEPARATOR . $this->config->getInstallationPath() . DIRECTORY_SEPARATOR;
-        $_SERVER['REQUEST_URI'] = $installationPath;
-        
-        if ($this->query) {
-            $_SERVER['REQUEST_URI'] .= $this->query;
-            $_SERVER['QUERY_STRING'] = parse_url($this->query, PHP_URL_QUERY);
-            parse_str($_SERVER['QUERY_STRING'], $_GET);
-        } else {
-            $_SERVER['QUERY_STRING'] = '';
-            $_GET = [];
-        }
-        
-        $_SERVER['REQUEST_METHOD'] = [HTTPClient::GET, HTTPClient::POST][$this->type];
-        
-        $fileSystem = $this->fileSystem;
-        $fileName = [$fileSystem::FN_INDEX, $fileSystem::FN_LOGIN][$this->type] . $fileSystem::FN_EXT;
-        
-        $_SERVER['SCRIPT_FILENAME'] = $fileSystem->getInstallationPath() . $fileName;
-        $_SERVER['SCRIPT_NAME'] = DIRECTORY_SEPARATOR . $fileName;
-        $_SERVER['PHP_SELF'] .= $installationPath . $fileName;
-        
-        unset($_SERVER['REDIRECT_URL'], $_SERVER['REDIRECT_QUERY_STRING']);
-        return $this;
-        
+        $this->themeFactory = $themeFactory;
+        $this->fileSystem = $fileSystem;
+        $this->loadType = $loadType;
+        $this->bootstrapMode = $bootstrapMode;
     }
     
     public function load()
     {
         
-        $this->checkInitState();
-        $this->state = self::STATE_PROGRESS;
+        $fileSystem = $this->fileSystem->load();
         
-        $patch = $this->patch;
-        if ($file = $patch->getPatchedFile($patch::PT_CONFIG)) {
-            $fileSystem = $this->fileSystem->load();
-            define('ABSPATH', $fileSystem->getInstallationPath());
-            eval($file);
-            if ($file = $patch->getPatchedFile($patch::PT_TRANSLATIONS)) {
-                eval($file);
-                if ($file = $patch->getPatchedFile($patch::PT_SETTINGS)) {
-                    
-                    list($server, $get, $post) = [$_SERVER, $_GET, $_POST];
-                    $this->initSuperglobals();
-                    
-                    require_once ABSPATH . $fileSystem::DIR_INCLUDES . DIRECTORY_SEPARATOR .
-                        $fileSystem::FN_PLUGIN . $fileSystem::FN_EXT;
-                    
-                    add_filter($this->filterInit, [$this, $this->themeInit], 10, 0);
-                    eval($file);
-                    remove_filter($this->filterInit, [$this, $this->themeInit]);
-                    
-                    if ($this->type == LoadType::LT_LOGIN) {
-                        if ($file = $patch->getPatchedFile($patch::PT_LOGIN)) {
-                            eval($file);
-                        }
-                    } else {
-                        
-                        ob_start();
-                        wp();
-                        
-                        if (!$this->getBootstrap()) {
-                            $this->theme->getHookStorageGroup()->getCommonLate()->create();
-                            $this->theme->includeTemplateLoader();
-                            $this->result = ob_get_contents();
-                        }
-                        
-                        ob_end_clean();
-                        
-                    }
-                    
-                    list($_SERVER, $_GET, $_POST) = [$server, $get, $post];
-                    $this->state = self::STATE_SUCCESS;
-                    
-                }
-            }
+        $this->bootstrap->essentials(true);
+        $this->entryPoint->environmentSave();
+        $this->bootstrap->main(true);
+        
+        if (
+                $this->loadType->isDefault()
+            &&  $this->bootstrapMode->disabled()
+        ) {
+            $this->result = $this->themeFactory->create()
+                ->renderEntity(
+                    WPINC .
+                    DIRECTORY_SEPARATOR .
+                    $fileSystem::FN_TPLDR
+                );
         }
         
-        if ($this->state != self::STATE_SUCCESS) {
-            throw new InitException(__('Could not initialize WordPress environment'));
-        }
-        
+        $this->entryPoint->environmentRestore();
         return $this;
         
+    }
+    
+    public function getResult()
+    {
+        return $this->result;
     }
     
 }

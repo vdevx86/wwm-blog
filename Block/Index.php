@@ -34,13 +34,15 @@ class Index extends \Magento\Framework\View\Element\Template
     
     protected function _prepareLayout()
     {
-        $this->pageConfig->getTitle()->set($this->entryPoint->wpGetDocumentTitle());
+        $this->pageConfig->getTitle()->set(
+            $this->entryPoint->wpGetDocumentTitle()
+        );
         return parent::_prepareLayout();
     }
     
-    public function getQueryResult()
+    public function getResult()
     {
-        return $this->wp->getQueryResult();
+        return $this->wp->getResult();
     }
     
 }

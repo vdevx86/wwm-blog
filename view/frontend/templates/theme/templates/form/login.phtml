@@ -1,4 +1,4 @@
-<?php global $theme; $templateParameters = $theme->getTemplateParameters(); ?>
+<?php $theme = \Wwm\Blog\Cms\WordPress\ThemeFactory::getInstance(); $templateParameters = $theme->getTemplateParameters(); ?>
 <form name="<?php echo $templateParameters->getFormId(); ?>" id="<?php echo $templateParameters->getFormId(); ?>" action="<?php echo $theme->escUrl($theme->getHomeURLNew() . '/wp-login.php', 'login_post'); ?>" method="post" data-hasrequired="<?php $theme->_e('* Required Fields'); ?>" novalidate="novalidate" data-mage-init='{"validation":{}}'>
     <fieldset class="fieldset">
         <?php $templateParameters->getTop(); ?>

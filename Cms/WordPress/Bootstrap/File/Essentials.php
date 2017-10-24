@@ -13,8 +13,8 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Storage\Group;
+namespace Wwm\Blog\Cms\WordPress\Bootstrap\File;
 
-class CommonLateFactory extends \Wwm\Blog\Cms\WordPress\Theme\Hook\StorageFactory
+class Essentials extends \Wwm\Blog\Cms\WordPress\Bootstrap\File
 {
 }

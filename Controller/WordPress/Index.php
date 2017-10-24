@@ -23,17 +23,20 @@ class Index extends \Magento\Framework\App\Action\Action
     protected $context;
     protected $forwardFactory;
     protected $wp;
+    protected $query;
     protected $resultPageFactory;
     
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\ForwardFactory $forwardFactory,
         \Wwm\Blog\Cms\WordPress $wp,
+        \Wwm\Blog\Cms\WordPress\Query $query,
         \Wwm\Blog\Magento\Framework\View\Result\PageFactory $resultPageFactory
     ) {
         $this->context = $context;
         $this->forwardFactory = $forwardFactory;
         $this->wp = $wp;
+        $this->query = $query;
         $this->resultPageFactory = $resultPageFactory;
         parent::__construct($context);
     }
@@ -44,15 +47,30 @@ class Index extends \Magento\Framework\App\Action\Action
         $result = false;
         
         try {
-            $this->wp->setQuery($this->getRequest()->getParam(Router::ROUTER_PARAMETER, false))->load();
-            $result = $this->resultPageFactory->create()->addDefaultHandle();
+            
+            $query = $this->getRequest()->getParam(
+                Router::ROUTER_PARAMETER,
+                false
+            );
+            
+            $this->query->set($query);
+            $this->wp->load();
+            
+            $result = $this->resultPageFactory->create()
+                ->addDefaultHandle();
+            
         } catch (\Exception $e) {
-            $this->context->getMessageManager()->addError($e->getMessage());
+            
+            $this->context->getMessageManager()
+                ->addError($e->getMessage());
+            
         }
         
         if (!$result) {
-            $this->getRequest()->setRequestUri('')->setDispatched(false);
-            $result = $this->forwardFactory->create()->forward('noroute');
+            $this->getRequest()->setRequestUri('')
+                ->setDispatched(false);
+            $result = $this->forwardFactory->create()
+                ->forward('noroute');
         }
         
         return $result;
