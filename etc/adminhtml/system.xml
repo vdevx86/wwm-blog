@@ -38,9 +38,9 @@
                     <label>Route name</label>
                     <comment>Default value: blog</comment>
                 </field>
-                <field id="theme_install" translate="label comment" type="button" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="theme_install" translate="label comment" type="Wwm\Blog\Block\Adminhtml\Form\Field\Install" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Theme installation</label>
-                    <frontend_model>Wwm\Blog\Block\System\Config\Form\Field\Button\ThemeInstall</frontend_model>
+                    <frontend_model>Wwm\Blog\Block\System\Config\Form\Field\Install</frontend_model>
                     <comment>Theme will be available from the WordPress admin panel only after installation</comment>
                 </field>
             </group>

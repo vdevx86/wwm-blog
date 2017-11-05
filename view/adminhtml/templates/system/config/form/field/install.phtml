@@ -1,3 +1,6 @@
+<button type="button" onclick="installWordPressTheme()">
+    <span><?php echo __('Install Theme'); ?></span>
+</button>
 <script>
 require([
     'underscore',
@@ -6,7 +9,7 @@ require([
 ], function (_, alert) {
     function installWordPressTheme() {
         var result;
-        new Ajax.Request("<?php echo $block->getAjaxUrl()?>", {
+        new Ajax.Request("<?php echo $block->getUrl('wwm_blog/system_config/themeinstall'); ?>", {
             onSuccess: function(response) {
                 try {
                     if (response.responseText.isJSON()) {
@@ -17,7 +20,7 @@ require([
             }.bind(this),
             onComplete: function(response) {
                 if (!_.isString(result)) {
-                    result = "<?php echo __('Unknown error')?>";
+                    result = "<?php echo __('Unknown error'); ?>";
                 }
                 alert({content: result});
             }.bind(this)
@@ -25,6 +28,4 @@ require([
     };
     window.installWordPressTheme = installWordPressTheme.bind(installWordPressTheme)
 })
-</script><?php
-
-echo $block->getButtonHtml();
+</script>
