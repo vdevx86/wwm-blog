@@ -58,7 +58,6 @@ final class ThemeFactory
                 $this->config->getRouteName()
             );
             
-            $theme->initFilterGlobals();
             $theme->removeHeadActions();
             $theme->enableThemeFeatures();
             $theme->loadThemeTextdomain(

@@ -19,6 +19,7 @@ abstract class AbstractLayerItem
 {
     
     protected $context;
+    protected $storeManager;
     protected $registry;
     protected $entryPoint;
     protected $themeOptions;
@@ -27,6 +28,7 @@ abstract class AbstractLayerItem
     
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
+        \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Framework\Registry $registry,
         \Wwm\Blog\Cms\WordPress\EntryPoint $entryPoint,
         \Wwm\Blog\Cms\WordPress\Theme\Options $themeOptions,
@@ -34,6 +36,7 @@ abstract class AbstractLayerItem
         \Magento\Framework\DataObject $templateParametersData
     ) {
         $this->context = $context;
+        $this->storeManager = $storeManager;
         $this->registry = $registry;
         $this->entryPoint = $entryPoint;
         $this->themeOptions = $themeOptions;

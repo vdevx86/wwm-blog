@@ -13,20 +13,20 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
 
 class CancelCommentReplyFixLink extends AbstractFilter
 {
     
-    public function filter($formattedLink, $link, $text)
+    public function filter(...$args)
     {
-        global $post;
-        return str_replace(
-            $link,
-            $this->entryPoint->untrailingslashit($this->entryPoint->getPermalink($post->ID)) . '#respond',
-            $formattedLink
+        $post = $this->entryPoint->globalsRead('post');
+        return $this->entryPoint->strReplace(
+            $args[1],
+            $this->entryPoint->untrailingslashit(
+                $this->entryPoint->getPermalink($post->ID)
+            ) . '#respond',
+            $args[0]
         );
     }
     

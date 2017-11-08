@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
 
 class FeedLinkFixHomeUrl extends AbstractFilter
@@ -22,7 +20,7 @@ class FeedLinkFixHomeUrl extends AbstractFilter
     
     public function filter($args = [])
     {
-        echo str_replace(
+        echo $this->entryPoint->strReplace(
             $this->entryPoint->getHomeURLNew(),
             $this->entryPoint->getHomeURLOriginal(),
             $this->entryPoint->getContents(function($args) {

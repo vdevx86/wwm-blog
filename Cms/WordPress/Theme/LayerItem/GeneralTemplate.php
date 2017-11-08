@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\LayerItem;
 
 class GeneralTemplate extends AbstractLayerItem
@@ -28,14 +26,8 @@ class GeneralTemplate extends AbstractLayerItem
     public function getLoginForm(array $args = [])
     {
         
-        $redirect = 'http';
-        if ($this->entryPoint->isSsl()) {
-            $redirect .= 's';
-        }
-        $redirect .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        
         $defaults = [
-            'redirect' => $redirect,
+            'redirect' => $this->context->getUrl()->getCurrentUrl(),
             'form_id' => 'loginform',
             'label_username' => $this->entryPoint->__('Username or Email'),
             'label_password' => $this->entryPoint->__('Password'),

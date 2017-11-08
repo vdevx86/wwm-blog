@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\LayerItem;
 
 class CommentTemplate extends AbstractLayerItem
@@ -23,15 +21,17 @@ class CommentTemplate extends AbstractLayerItem
     public function getCommentForm(array $args = [], $postId = null)
     {
         
-        $commentsFormHtml = $this->entryPoint->getContents(function($args, $postId) {
+        $result = $this->entryPoint->getContents(function($args, $postId) {
             $this->entryPoint->commentForm($args, $postId);
         }, [$args, $postId]);
         
-        return str_replace(
+        $result = $this->entryPoint->strReplace(
             '<form ',
             $this->entryPoint->renderTemplate(['form', 'comment', 'formTag']),
-            $commentsFormHtml
+            $result
         );
+        
+        return $result;
         
     }
     

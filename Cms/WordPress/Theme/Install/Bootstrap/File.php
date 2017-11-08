@@ -23,6 +23,7 @@ class File extends \Wwm\Blog\Cms\WordPress\Bootstrap\File
     protected $destination;
     
     public function __construct(
+        \Wwm\Blog\Cms\WordPress\EntryPoint $entryPoint,
         \Magento\Framework\Filesystem\Directory\ReadFactory $readFactory,
         \Zend\Filter\Compress\Gz $gz,
         \Magento\Framework\Encryption\Encryptor $encryptor,
@@ -33,6 +34,7 @@ class File extends \Wwm\Blog\Cms\WordPress\Bootstrap\File
         FileDataProviderInterface $dataProvider = null
     ) {
         parent::__construct(
+            $entryPoint,
             $readFactory,
             $gz,
             $encryptor,

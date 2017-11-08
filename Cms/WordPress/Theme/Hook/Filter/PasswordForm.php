@@ -13,14 +13,12 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
 
 class PasswordForm extends AbstractFilter
 {
     
-    public function filter($output)
+    public function filter()
     {
         return $this->entryPoint->renderTemplate(['form', 'password']);
     }

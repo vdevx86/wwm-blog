@@ -18,6 +18,7 @@ namespace Wwm\Blog\Cms\WordPress\Bootstrap;
 class File extends \Zend\Serializer\Adapter\PhpCode implements FileInterface
 {
     
+    protected $entryPoint;
     protected $readFactory;
     protected $gz;
     protected $encryptor;
@@ -30,6 +31,7 @@ class File extends \Zend\Serializer\Adapter\PhpCode implements FileInterface
     protected $contents = null;
     
     public function __construct(
+        \Wwm\Blog\Cms\WordPress\EntryPoint $entryPoint,
         \Magento\Framework\Filesystem\Directory\ReadFactory $readFactory,
         \Zend\Filter\Compress\Gz $gz,
         \Magento\Framework\Encryption\Encryptor $encryptor,
@@ -38,6 +40,7 @@ class File extends \Zend\Serializer\Adapter\PhpCode implements FileInterface
         $source,
         FileDataProviderInterface $dataProvider = null
     ) {
+        $this->entryPoint = $entryPoint;
         $this->readFactory = $readFactory;
         $this->gz = $gz->setMode(self::ENC_MODE);
         $this->encryptor = $encryptor;
@@ -96,19 +99,21 @@ class File extends \Zend\Serializer\Adapter\PhpCode implements FileInterface
         ]);
         
         $contents = $this->encryptor->decrypt($contents);
-        $contents = base64_decode($contents);
+        $contents = $this->entryPoint->base64Decode($contents);
         $contents = $this->gz->decompress($contents);
         
         if ($this->dataProvider instanceof FileDataProviderInterface) {
             
             $to = $this->dataProvider->getData();
-            $from = array_keys($to);
+            $from = $this->entryPoint->arrayKeys($to);
             
             foreach ($from as &$value) {
-                $value = self::SC_BEFORE . strtoupper($value) . self::SC_AFTER;
+                $value = self::SC_BEFORE
+                    . $this->entryPoint->strtoupper($value)
+                    . self::SC_AFTER;
             }
             
-            $contents = str_replace($from, $to, $contents);
+            $contents = $this->entryPoint->strReplace($from, $to, $contents);
             
         }
         

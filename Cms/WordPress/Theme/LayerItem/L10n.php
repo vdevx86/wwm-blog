@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\LayerItem;
 
 use Wwm\Blog\Cms\WordPress\ThemeInterface;

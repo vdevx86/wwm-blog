@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\LayerItem;
 
 class Pluggable extends AbstractLayerItem
@@ -24,6 +22,7 @@ class Pluggable extends AbstractLayerItem
     
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
+        \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Framework\Registry $registry,
         \Wwm\Blog\Cms\WordPress\EntryPoint $entryPoint,
         \Wwm\Blog\Cms\WordPress\Theme\Options $themeOptions,
@@ -33,6 +32,7 @@ class Pluggable extends AbstractLayerItem
     ) {
         parent::__construct(
             $context,
+            $storeManager,
             $registry,
             $entryPoint,
             $themeOptions,

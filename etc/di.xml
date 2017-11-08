@@ -32,7 +32,7 @@
         <arguments>
             <argument name="instanceName" xsi:type="string">Wwm\Blog\Cms\WordPress\Bootstrap\File\Essentials</argument>
             <argument name="data" xsi:type="array">
-                <item name="hash" xsi:type="string">5HWmISQmtRlEtHxT67V0IYWnrNPNYdeH</item>
+                <item name="hash" xsi:type="string">C09JXyM0FjWm60HX7mMg8DRI5DltpzwP</item>
                 <item name="source" xsi:type="string">bootstrap/file/essentials</item>
             </argument>
         </arguments>
@@ -135,15 +135,15 @@
             <argument name="filters" xsi:type="array">
                 <item name="postLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">post_link</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\PostLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="pageLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">page_link</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\PageLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="pageNumberLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">get_pagenum_link</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\PageNumberLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="cancelCommentReplyFixLink" xsi:type="array">
                     <item name="name" xsi:type="string">cancel_comment_reply_link</item>
@@ -155,7 +155,7 @@
                 </item>
                 <item name="termLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">term_link</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\TermLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="addCommentReplyScript" xsi:type="array">
                     <item name="name" xsi:type="string">wp_enqueue_scripts</item>
@@ -187,11 +187,11 @@
                 </item>
                 <item name="canonicalFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">get_canonical_url</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\CanonicalFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="canonicalRedirectFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">redirect_canonical</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\CanonicalRedirectFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="passwordForm" xsi:type="array">
                     <item name="name" xsi:type="string">the_password_form</item>
@@ -203,19 +203,19 @@
                 </item>
                 <item name="archiveLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">get_archives_link</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\ArchiveLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="yearLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">year_link</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\YearLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="monthLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">month_link</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\MonthLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="dayLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">day_link</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\DayLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
                 <item name="feedLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">wp_head</item>
@@ -223,7 +223,7 @@
                 </item>
                 <item name="shortLinkFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">get_shortlink</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\ShortLinkFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
             </argument>
         </arguments>
@@ -233,7 +233,7 @@
             <argument name="filters" xsi:type="array">
                 <item name="optionHomeFixHomeUrl" xsi:type="array">
                     <item name="name" xsi:type="string">option_home</item>
-                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\OptionHomeFixHomeUrl</item>
+                    <item name="filter" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Hook\Filter\FixHomeUrl</item>
                 </item>
             </argument>
         </arguments>

@@ -15,16 +15,12 @@
 
 namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
 
-class PageNumberLinkFixHomeUrl extends AbstractFilter
+class FixHomeUrl extends AbstractFilter
 {
     
-    public function filter($result)
+    public function filter(...$args)
     {
-        return str_replace(
-            $this->entryPoint->getHomeURLOriginal(),
-            $this->entryPoint->getHomeURLNew(),
-            $result
-        );
+        return $this->fixHomeUrl($args[0]);
     }
     
 }

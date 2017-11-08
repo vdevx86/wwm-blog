@@ -36,7 +36,7 @@ class LayerFactory
     {
         $layerItems = [];
         foreach ($this->layerItems as $layerItemName => $layerItem) {
-            $layerItems[$layerItemName] = $this->objectManager->create($layerItem);
+            $layerItems[$layerItemName] = $this->objectManager->get($layerItem);
         }
         return $this->objectManager->create($this->instanceName, ['layerItems' => $layerItems]);
     }

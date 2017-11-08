@@ -13,14 +13,12 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
 
 class NavigationMarkupTemplate extends AbstractFilter
 {
     
-    public function filter($template, $class)
+    public function filter()
     {
         return $this->entryPoint->getContents(function () {
             $this->entryPoint->getNavigation();

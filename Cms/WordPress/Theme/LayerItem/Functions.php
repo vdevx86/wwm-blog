@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\LayerItem;
 
 class Functions extends AbstractLayerItem
@@ -23,7 +21,7 @@ class Functions extends AbstractLayerItem
     public function getContents(\Closure $function, array $params = [])
     {
         
-        ob_start();
+        $this->entryPoint->obStart();
         
         if ($params) {
             $function(...$params);
@@ -31,8 +29,8 @@ class Functions extends AbstractLayerItem
             $function();
         }
         
-        $contents = ob_get_contents();
-        ob_end_clean();
+        $contents = $this->entryPoint->obGetContents();
+        $this->entryPoint->obEndClean();
         
         return $contents;
         

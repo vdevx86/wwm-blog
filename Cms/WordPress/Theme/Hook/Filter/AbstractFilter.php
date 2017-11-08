@@ -17,4 +17,14 @@ namespace Wwm\Blog\Cms\WordPress\Theme\Hook\Filter;
 
 abstract class AbstractFilter extends \Wwm\Blog\Cms\WordPress\Theme\AbstractHook
 {
+    
+    public function fixHomeUrl($url)
+    {
+        return $this->entryPoint->strReplace(
+            $this->entryPoint->getHomeURLOriginal(),
+            $this->entryPoint->getHomeURLNew(),
+            $url
+        );
+    }
+    
 }

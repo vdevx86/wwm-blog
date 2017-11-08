@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\LayerItem;
 
 class Widgets extends AbstractLayerItem
@@ -26,11 +24,13 @@ class Widgets extends AbstractLayerItem
         $before = 'location.href = "';
         $after = '/?cat=" + dropdown.options[ dropdown.selectedIndex ].value;';
         
-        return str_replace(
+        $html = $this->entryPoint->strReplace(
             $before . $this->entryPoint->getHomeURLOriginal() . $after,
             $before . $this->entryPoint->getHomeURLNew() . $after,
             $html
         );
+        
+        return $html;
         
     }
     
@@ -43,14 +43,14 @@ class Widgets extends AbstractLayerItem
         );
     }
     
-    public function theDynamicSidebar($id)
+    public function dynamicSidebar($id)
     {
         echo $this->entryPoint->getDynamicSidebar($id);
     }
     
-    public function dynamicSidebar($id)
+    public function theDynamicSidebar($id)
     {
-        echo $this->entryPoint->getDynamicSidebar($id);
+        $this->dynamicSidebar($id);
     }
     
 }

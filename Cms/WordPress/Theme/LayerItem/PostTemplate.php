@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\LayerItem;
 
 class PostTemplate extends AbstractLayerItem
@@ -42,8 +40,8 @@ class PostTemplate extends AbstractLayerItem
             $classes[] = 'first';
         }
         
-        global $wp_query;
-        if ($I == $wp_query->post_count) {
+        $wpQuery = $this->entryPoint->globalsRead('wp_query');
+        if ($I == $wpQuery->post_count) {
             $classes[] = 'last';
         }
         

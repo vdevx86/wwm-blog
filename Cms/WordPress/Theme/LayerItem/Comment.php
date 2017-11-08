@@ -13,8 +13,6 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Wwm\Blog\Cms\WordPress\Theme\LayerItem;
 
 class Comment extends AbstractLayerItem
@@ -41,12 +39,12 @@ class Comment extends AbstractLayerItem
     {
         $commentsNumber = $this->entryPoint->getCommentsNumber();
         if ($commentsNumber == 1) {
-            printf(
+            $this->entryPoint->printf(
                 $this->entryPoint->__('One response to %s'),
                 $this->entryPoint->getTheTitle()
             );
         } else {
-            printf(
+            $this->entryPoint->printf(
                 $this->entryPoint->_n('%1$s response to %2$s', '%1$s responses to %2$s', $commentsNumber),
                 $this->entryPoint->numberFormatI18n($commentsNumber),
                 $this->entryPoint->getTheTitle()
