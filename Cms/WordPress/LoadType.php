@@ -18,16 +18,12 @@ namespace Wwm\Blog\Cms\WordPress;
 class LoadType implements LoadTypeInterface
 {
     
-    protected $config;
     protected $uriParser;
-    
     protected $type = self::LT_DEFAULT;
     
     public function __construct(
-        \Wwm\Blog\Helper\Config $config,
         \Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface $uriParser
     ) {
-        $this->config = $config;
         $this->uriParser = $uriParser;
         $this->_construct();
     }
@@ -39,11 +35,16 @@ class LoadType implements LoadTypeInterface
     
     public function parse()
     {
+        
         $query = $this->uriParser->getQuery();
-        if (strpos($query, FileSystem::FN_LOGIN . FileSystem::FN_EXT) === 0) {
+        $fileName = FileSystemInterface::FN_LOGIN . FileSystemInterface::FN_EXT;
+        
+        if (strpos($query, $fileName) === 0) {
             $this->type = self::LT_LOGIN;
         }
+        
         return $this;
+        
     }
     
     public function getType()
@@ -64,11 +65,11 @@ class LoadType implements LoadTypeInterface
     public function toFileName()
     {
         if ($this->type == self::LT_LOGIN) {
-            $result = FileSystem::FN_LOGIN;
+            $result = FileSystemInterface::FN_LOGIN;
         } else {
-            $result = FileSystem::FN_INDEX;
+            $result = FileSystemInterface::FN_INDEX;
         }
-        $result .= FileSystem::FN_EXT;
+        $result .= FileSystemInterface::FN_EXT;
         return $result;
     }
     

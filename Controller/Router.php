@@ -35,7 +35,7 @@ class Router implements \Magento\Framework\App\RouterInterface
     
     public function __construct(
         \Magento\Framework\App\ActionFactory $actionFactory,
-        \Wwm\Blog\Helper\Config $config,
+        \Wwm\Blog\Cms\WordPress\ConfigInterface $config,
         \Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface $uriParser,
         LoadType $loadType
     ) {

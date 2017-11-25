@@ -13,46 +13,62 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Helper;
+namespace Wwm\Blog\Cms\WordPress;
 
-class Config
+use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\UrlInterface;
+use Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface;
+
+class Config extends \Magento\Framework\App\Config implements ConfigInterface
 {
     
-    const XML_PATH_STATUS = 'wwm_blog/general/status';
-    const XML_PATH_INSTALLATION_PATH = 'wwm_blog/general/path';
-    const XML_PATH_ROUTE_NAME = 'wwm_blog/general/route';
-    
     const ROUTER_NAME_DEFAULT = 'blog';
-    
-    const XML_PATH_MAINMENU_ADD = 'wwm_blog/mainmenu/add';
-    const XML_PATH_MAINMENU_TITLE = 'wwm_blog/mainmenu/title';
-    
     const MAINMENU_TITLE_DEFAULT = 'Blog';
     
-    protected $scopeConfig;
     protected $storeManager;
     
+    protected $store = null;
     protected $installationPath = null;
     protected $routeName = null;
     protected $baseUrl = null;
     
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Store\Model\StoreManager $storeManager
+        \Magento\Framework\App\Config\ScopeCodeResolver $scopeCodeResolver,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        array $types = []
     ) {
-        $this->scopeConfig = $scopeConfig;
+        parent::__construct($scopeCodeResolver, $types);
         $this->storeManager = $storeManager;
+    }
+    
+    public function getStore()
+    {
+        if ($this->store === null) {
+            $this->store = $this->storeManager->getStore();
+        }
+        return $this->store;
+    }
+    
+    public function getValue(
+        $path,
+        $scope = ScopeInterface::SCOPE_STORE,
+        $storeId = false
+    ) {
+        if (!$storeId) {
+            $storeId = $this->getStore()->getId();
+        }
+        return parent::getValue(self::PREFIX . $path, $scope, $storeId);
     }
     
     public function isModuleEnabled()
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_STATUS);
+        return $this->getValue('general/status');
     }
     
     public function getInstallationPath()
     {
         if ($this->installationPath === null) {
-            $this->installationPath = $this->scopeConfig->getValue(static::XML_PATH_INSTALLATION_PATH);
+            $this->installationPath = $this->getValue('general/path');
         }
         return $this->installationPath;
     }
@@ -60,7 +76,7 @@ class Config
     public function getRouteName()
     {
         if ($this->routeName === null) {
-            $routeName = $this->scopeConfig->getValue(static::XML_PATH_ROUTE_NAME);
+            $routeName = $this->getValue('general/route');
             if (!$routeName) {
                 $routeName = static::ROUTER_NAME_DEFAULT;
             }
@@ -71,33 +87,27 @@ class Config
     
     public function getBaseUrlFrontend()
     {
-        return $this->storeManager->getStore()
-            ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_LINK);
+        return $this->getStore()->getBaseUrl(UrlInterface::URL_TYPE_LINK);
     }
     
     public function getBaseUrl()
     {
         if ($this->baseUrl === null) {
-            $this->baseUrl = $this->getBaseUrlFrontend() . $this->getRouteName() .
-                \Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface::DELIMITER;
+            $this->baseUrl = $this->getBaseUrlFrontend() .
+                $this->getRouteName() .
+                ParserInterface::DELIMITER;
         }
         return $this->baseUrl;
     }
     
     public function isMainMenuAdd()
     {
-        return $this->scopeConfig->getValue(
-            static::XML_PATH_MAINMENU_ADD,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+        return $this->getValue('mainmenu/add');
     }
     
     public function getMainMenuTitle()
     {
-        $title = $this->scopeConfig->getValue(
-            static::XML_PATH_MAINMENU_TITLE,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+        $title = $this->getValue('mainmenu/title');
         if (!$title) {
             $title = __(static::MAINMENU_TITLE_DEFAULT);
         }

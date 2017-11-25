@@ -15,133 +15,101 @@
 
 namespace Wwm\Blog\Cms\WordPress;
 
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem\DriverPool;
 use Magento\Framework\Exception\FileSystemException;
 
-class FileSystem
+class FileSystem implements FileSystemInterface
 {
     
-    const FN_EXT = '.php';
-    
-    const DIR_ROOT = 'wordpress';
-    const DIR_INCLUDES = 'wp-includes';
-    
-    // Files from root directory
-    const FN_INDEX = 'index';
-    const FN_CONFIG = 'wp-config';
-    const FN_SETTINGS = 'wp-settings';
-    const FN_LOGIN = 'wp-login';
-    const FN_LOAD = 'wp-load';
-    
-    // Files from wp-includes directory
-    const FN_PLUGIN = 'plugin';
-    const FN_TRANSLATE = 'l10n';
-    const FN_TPLDR = 'template-loader';
-    
+    protected $directoryList;
+    protected $readFactory;
     protected $config;
-    protected $driverFile;
     
-    protected $loadStatus = false;
-    protected $installationPath;
-    protected $includePath;
+    protected $directoryRead = null;
     
     public function __construct(
-        \Wwm\Blog\Helper\Config $config,
-        \Magento\Framework\Filesystem\Driver\File $driverFile
+        \Magento\Framework\Filesystem\DirectoryList $directoryList,
+        \Magento\Framework\Filesystem\Directory\ReadFactory $readFactory,
+        \Wwm\Blog\Cms\WordPress\ConfigInterface $config
     ) {
+        $this->directoryList = $directoryList;
+        $this->readFactory = $readFactory;
         $this->config = $config;
-        $this->driverFile = $driverFile;
     }
     
-    public function getLoadStatus()
-    {
-        return $this->loadStatus;
-    }
-    
-    public function getInstallationPath()
-    {
-        return $this->installationPath;
-    }
-    
-    public function getIncludePath()
-    {
-        return $this->includePath;
-    }
-    
-    public function validateDirectory($path)
-    {
-        return $this->driverFile->isDirectory($path)
-            && $this->driverFile->isReadable($path);
-    }
-    
-    public function validateFile($file)
-    {
-        return $this->driverFile->isFile($file)
-            && $this->driverFile->isReadable($file);
-    }
-    
-    public function load()
+    public function getDirectoryRead()
     {
         
-        if (!$this->getLoadStatus()) {
+        if ($this->directoryRead === null) {
             
-            $installationPath = BP . DIRECTORY_SEPARATOR . ($this->config->getInstallationPath() ?: static::DIR_ROOT);
-            if (!$this->validateDirectory($installationPath)) {
+            $installationDirectory = $this->config->getInstallationPath();
+            if (!$installationDirectory) {
+                $installationDirectory = self::DIR_ROOT;
+            }
+            
+            $installationPath = $this->directoryList->getPath(DirectoryList::ROOT) .
+                DIRECTORY_SEPARATOR . $installationDirectory;
+            
+            $directoryRead = $this->readFactory->create(
+                $installationPath,
+                DriverPool::FILE
+            );
+            
+            if (!$directoryRead->isDirectory()) {
                 throw new FileSystemException(__(
-                    'WordPress installation path does not exists or not readable: %1',
-                    $installationPath
+                    'WordPress installation path is not a directory: %1',
+                    $directoryRead->getAbsolutePath()
+                ));
+            }
+            if (!$directoryRead->isReadable()) {
+                throw new FileSystemException(__(
+                    'WordPress installation path is not readable: %1',
+                    $directoryRead->getAbsolutePath()
                 ));
             }
             
-            $installationPath .= DIRECTORY_SEPARATOR;
-            $this->installationPath = $installationPath;
-            
-            $fileName = $installationPath . static::FN_INDEX . static::FN_EXT;
-            if (!$this->validateFile($fileName)) {
+            if (!$directoryRead->isDirectory(self::DIR_INCLUDES)) {
                 throw new FileSystemException(__(
-                    'WordPress index php file not founded or not readable: %1',
-                    $fileName
+                    'WordPress includes path is not a directory: %1',
+                    $directoryRead->getAbsolutePath() . self::DIR_INCLUDES
+                ));
+            }
+            if (!$directoryRead->isReadable(self::DIR_INCLUDES)) {
+                throw new FileSystemException(__(
+                    'WordPress includes path is not readable: %1',
+                    $directoryRead->getAbsolutePath() . self::DIR_INCLUDES
                 ));
             }
             
-            $fileName = $installationPath . static::FN_CONFIG . static::FN_EXT;
-            if (!$this->validateFile($fileName)) {
-                throw new FileSystemException(__(
-                    'WordPress configuration php file not founded or not readable: %1',
-                    $fileName
-                ));
-            }
-            $fileName = $installationPath . static::FN_SETTINGS . static::FN_EXT;
-            if (!$this->validateFile($fileName)) {
-                throw new FileSystemException(__(
-                    'WordPress settings php file not founded or not readable: %1',
-                    $fileName
-                ));
-            }
+            $fileNames = [
+                self::FN_INDEX,
+                self::FN_CONFIG,
+                self::FN_SETTINGS,
+                self::DIR_INCLUDES . DIRECTORY_SEPARATOR . self::FN_TRANSLATE
+            ];
             
-            $includePath = $installationPath . static::DIR_INCLUDES;
-            if (!$this->validateDirectory($includePath)) {
-                throw new FileSystemException(__(
-                    'WordPress include path does not exists or not readable: %1',
-                    $includePath
-                ));
-            }
-            
-            $includePath .= DIRECTORY_SEPARATOR;
-            $this->includePath = $includePath;
-            
-            $fileName = $includePath . static::FN_TRANSLATE . static::FN_EXT;
-            if (!$this->validateFile($fileName)) {
-                throw new FileSystemException(__(
-                    'WordPress localizations php file not founded or not readable: %1',
-                    $fileName
-                ));
+            foreach ($fileNames as $fileName) {
+                $fileName .= self::FN_EXT;
+                if (!$directoryRead->isFile($fileName)) {
+                    throw new FileSystemException(__(
+                        'WordPress file is not a file: %1',
+                        $directoryRead->getAbsolutePath() . $fileName
+                    ));
+                }
+                if (!$directoryRead->isReadable($fileName)) {
+                    throw new FileSystemException(__(
+                        'WordPress file is not readable: %1',
+                        $directoryRead->getAbsolutePath() . $fileName
+                    ));
+                }
             }
             
-            $this->loadStatus = true;
+            $this->directoryRead = $directoryRead;
             
         }
         
-        return $this;
+        return $this->directoryRead;
         
     }
     

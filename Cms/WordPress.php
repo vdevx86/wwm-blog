@@ -15,6 +15,8 @@
 
 namespace Wwm\Blog\Cms;
 
+use Wwm\Blog\Cms\WordPress\FileSystemInterface;
+
 final class WordPress implements CmsInterface
 {
     
@@ -31,7 +33,7 @@ final class WordPress implements CmsInterface
         WordPress\EntryPoint $entryPoint,
         WordPress\Bootstrap $bootstrap,
         WordPress\ThemeFactory $themeFactory,
-        WordPress\FileSystem $fileSystem,
+        FileSystemInterface $fileSystem,
         WordPress\LoadType $loadType,
         WordPress\Bootstrap\Mode $bootstrapMode
     ) {
@@ -46,7 +48,7 @@ final class WordPress implements CmsInterface
     public function load()
     {
         
-        $fileSystem = $this->fileSystem->load();
+        $this->fileSystem->getDirectoryRead();
         
         $this->bootstrap->essentials(true);
         $this->entryPoint->environmentSave();
@@ -60,7 +62,7 @@ final class WordPress implements CmsInterface
                 ->renderEntity(
                     WPINC .
                     DIRECTORY_SEPARATOR .
-                    $fileSystem::FN_TPLDR
+                    FileSystemInterface::FN_TPLDR
                 );
         }
         

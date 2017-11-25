@@ -31,7 +31,7 @@ class Theme extends Renderer implements ThemeInterface
         \Magento\Framework\Registry $registry,
         EntryPoint $entryPoint,
         Theme\Options $options,
-        FileSystem $fileSystem
+        FileSystemInterface $fileSystem
     ) {
         $this->objectManager = $objectManager;
         $this->context = $context;

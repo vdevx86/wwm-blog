@@ -24,7 +24,7 @@ class Renderer extends \Magento\Framework\View\TemplateEngine\Php
     
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        FileSystem $fileSystem
+        FileSystemInterface $fileSystem
     ) {
         $this->objectManager = $objectManager;
         $this->fileSystem = $fileSystem;
@@ -44,11 +44,15 @@ class Renderer extends \Magento\Framework\View\TemplateEngine\Php
     
     public function renderEntity($fileName)
     {
-        $installationPath = $this->fileSystem->getInstallationPath();
+        
+        $installationPath = $this->fileSystem->getDirectoryRead()
+            ->getAbsolutePath();
+        
         return $this->render(
             $this->block,
-            $installationPath . $fileName . FileSystem::FN_EXT
+            $installationPath . $fileName . FileSystemInterface::FN_EXT
         );
+        
     }
     
     public function __call($name, $args)

@@ -16,7 +16,7 @@
 namespace Wwm\Blog\Cms\WordPress\FileSystem;
 
 use Magento\Framework\Exception\FileSystemException;
-use Wwm\Blog\Cms\WordPress\FileSystem;
+use Wwm\Blog\Cms\WordPress\FileSystemInterface;
 
 class File
 {
@@ -25,7 +25,7 @@ class File
     protected $driverFile;
     
     public function __construct(
-        FileSystem $fileSystem,
+        FileSystemInterface $fileSystem,
         \Magento\Framework\Filesystem\Driver\File $driverFile
     ) {
         $this->fileSystem = $fileSystem;
@@ -35,9 +35,12 @@ class File
     public function readFile($fileName)
     {
         
-        $fileName .= FileSystem::FN_EXT;
+        $fileName .= FileSystemInterface::FN_EXT;
+        $installationPath = $this->fileSystem->getDirectoryRead()
+            ->getAbsolutePath();
+        
         $content = $this->driverFile->fileGetContents(
-            $this->fileSystem->load()->getInstallationPath() . $fileName
+            $installationPath . $fileName
         );
         
         if (!$content) {

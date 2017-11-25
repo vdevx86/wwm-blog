@@ -15,7 +15,9 @@
 
 namespace Wwm\Blog\Cms\WordPress\Bootstrap\File\Main;
 
+use Wwm\Blog\Cms\WordPress\FileSystemInterface;
 use Wwm\Blog\Cms\WordPress\Bootstrap\FileDataProviderInterface;
+use Wwm\Blog\Cms\WordPress\FileSystem\File\PatcherFactory;
 
 class MainFileDataProvider implements FileDataProviderInterface
 {
@@ -25,16 +27,16 @@ class MainFileDataProvider implements FileDataProviderInterface
     protected $config;
     protected $loadType;
     protected $fileSystem;
-    protected $patch;
+    protected $patcherFactory;
     protected $query;
     
     public function __construct(
         \Magento\Framework\DataObject $data,
         \Magento\Framework\Math\Random $mathRandom,
-        \Wwm\Blog\Helper\Config $config,
+        \Wwm\Blog\Cms\WordPress\ConfigInterface $config,
         \Wwm\Blog\Cms\WordPress\LoadType $loadType,
-        \Wwm\Blog\Cms\WordPress\FileSystem $fileSystem,
-        \Wwm\Blog\Cms\WordPress\FileSystem\File\Php\Patch $patch,
+        FileSystemInterface $fileSystem,
+        PatcherFactory $patcherFactory,
         \Wwm\Blog\Cms\WordPress\Query $query
     ) {
         $this->data = $data;
@@ -42,32 +44,32 @@ class MainFileDataProvider implements FileDataProviderInterface
         $this->config = $config;
         $this->loadType = $loadType;
         $this->fileSystem = $fileSystem;
-        $this->patch = $patch;
+        $this->patcherFactory = $patcherFactory;
         $this->query = $query;
     }
     
     public function getData()
     {
         
-        $data = $this->data;
-        $patch = $this->patch;
+        $patch = $this->patcherFactory->create();
+        $installationPath = $this->fileSystem->getDirectoryRead()
+            ->getAbsolutePath();
         
+        $data = $this->data;
         $data->setUniqueId($this->mathRandom->getUniqueHash())
             ->setConfigInstallationPath($this->config->getInstallationPath())
             ->setQuery($this->query->get())
             ->setLoadType($this->loadType->getType())
-            ->setFileSystemInstallationPath(
-                $this->fileSystem->load()->getInstallationPath()
-            )
+            ->setFileSystemInstallationPath($installationPath)
             ->setFileName($this->loadType->toFileName())
             ->setUseThemes((int)!$this->loadType->getType())
-            ->setFileConfig($patch->getFile($patch::PT_CONFIG))
-            ->setFileTranslations($patch->getFile($patch::PT_TRANSLATIONS))
-            ->setFileSettings($patch->getFile($patch::PT_SETTINGS));
+            ->setFileConfig($patch->config())
+            ->setFileTranslations($patch->translations())
+            ->setFileSettings($patch->settings());
         
         $fileLogin = null;
         if ($this->loadType->isLogin()) {
-            $fileLogin = $patch->getFile($patch::PT_LOGIN);
+            $fileLogin = $patch->login();
         }
         $data->setFileLogin($fileLogin);
         

@@ -24,21 +24,21 @@
             <label>WordPress Integration</label>
             <tab>wwm</tab>
             <resource>Wwm_Blog::config</resource>
-            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
-                <field id="status" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="status" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="path" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="path" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>WordPress installation directory</label>
                     <comment>Default value: wordpress</comment>
                 </field>
-                <field id="route" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="route" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Route name</label>
                     <comment>Default value: blog</comment>
                 </field>
-                <field id="theme_install" translate="label comment" type="Wwm\Blog\Block\Adminhtml\Form\Field\Install" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="theme_install" translate="label comment" type="Wwm\Blog\Block\Adminhtml\Form\Field\Install" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Theme installation</label>
                     <frontend_model>Wwm\Blog\Block\System\Config\Form\Field\Install</frontend_model>
                     <comment>Theme will be available from the WordPress admin panel only after installation</comment>

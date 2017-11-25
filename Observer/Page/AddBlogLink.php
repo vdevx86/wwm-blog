@@ -24,7 +24,7 @@ class AddBlogLink implements \Magento\Framework\Event\ObserverInterface
     protected $nodeFactory;
     
     public function __construct(
-        \Wwm\Blog\Helper\Config $config,
+        \Wwm\Blog\Cms\WordPress\ConfigInterface $config,
         \Magento\Framework\Data\Tree\NodeFactory $nodeFactory
     ) {
         $this->config = $config;

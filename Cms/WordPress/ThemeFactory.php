@@ -30,7 +30,7 @@ final class ThemeFactory
     
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Wwm\Blog\Helper\Config $config,
+        \Wwm\Blog\Cms\WordPress\ConfigInterface $config,
         EntryPoint $entryPoint,
         \Wwm\Blog\Cms\WordPress\LoadType $loadType,
         $instanceName = ThemeInterface::class

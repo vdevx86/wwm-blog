@@ -13,19 +13,19 @@
  * @copyright 2017 Ovakimyan Vazgen <vdevx86job@gmail.com>
  */
 
-namespace Wwm\Blog\Cms\WordPress\FileSystem\File;
+namespace Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher;
 
-use Magento\Framework\Exception\FileSystemException;
-use Wwm\Blog\Cms\WordPress\FileSystem;
-
-class Php extends \Wwm\Blog\Cms\WordPress\FileSystem\File
+abstract class AbstractPatch implements PatchInterface
 {
     
-    const FNPART_PHPTAG = '<?php';
+    public function getFileName()
+    {
+        return static::FILENAME;
+    }
     
     public static function removePhpTag($content)
     {
-        if (strpos($content, static::FNPART_PHPTAG) === 0) {
+        if (strpos($content, '<?php') === 0) {
             $I = 5;
             do {
                 $content[--$I] = ' ';
@@ -34,10 +34,10 @@ class Php extends \Wwm\Blog\Cms\WordPress\FileSystem\File
         return $content;
     }
     
-    public function readFile($fileName)
+    public function patch($content)
     {
-        $content = parent::readFile($fileName);
-        return static::removePhpTag($content);
+        $content = static::removePhpTag($content);
+        return $content;
     }
     
 }

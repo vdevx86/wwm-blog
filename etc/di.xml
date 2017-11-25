@@ -17,7 +17,11 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Wwm\Blog\Cms\CmsInterface" type="Wwm\Blog\Cms\WordPress"/>
+    <preference for="Wwm\Blog\Cms\WordPress\FileSystemInterface" type="Wwm\Blog\Cms\WordPress\FileSystem"/>
     <preference for="Wwm\Blog\Cms\WordPress\ThemeInterface" type="Wwm\Blog\Cms\WordPress\Theme"/>
+    <preference for="Wwm\Blog\Cms\WordPress\ConfigInterface" type="Wwm\Blog\Cms\WordPress\Config"/>
+    <preference for="Wwm\Blog\Cms\WordPress\FileSystem\File\PatcherInterface" type="Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher"/>
+    <preference for="Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher\PatchInterface" type="Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher\Patch"/>
     <preference for="Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface" type="Wwm\Blog\Magento\Framework\App\Request\Http\Uri\Parser"/>
     <type name="Wwm\Blog\Cms\WordPress\Bootstrap">
         <arguments>
@@ -85,6 +89,16 @@
                 <item name="hash" xsi:type="string">ubbkWw4ZBdpiv0Tm3v3ifMYam2orusC1</item>
                 <item name="source" xsi:type="string">theme/install/bootstrap/file/style</item>
                 <item name="destination" xsi:type="string">style.css</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Wwm\Blog\Cms\WordPress\FileSystem\File\PatcherFactory">
+        <arguments>
+            <argument name="patches" xsi:type="array">
+                <item name="config" xsi:type="object">Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher\Patch\Config</item>
+                <item name="translations" xsi:type="object">Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher\Patch\Translations</item>
+                <item name="settings" xsi:type="object">Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher\Patch\Settings</item>
+                <item name="login" xsi:type="object">Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher\Patch\Login</item>
             </argument>
         </arguments>
     </type>
