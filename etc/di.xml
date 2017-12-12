@@ -65,7 +65,7 @@
         <arguments>
             <argument name="instanceName" xsi:type="string">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\Functions</argument>
             <argument name="data" xsi:type="array">
-                <item name="hash" xsi:type="string">eAHUCEn3DnVeqw7wLHutVX73u69BurFg</item>
+                <item name="hash" xsi:type="string">wbpzbmCmuXxXCdyIBRYWcl8ODKvYc3EH</item>
                 <item name="source" xsi:type="string">theme/install/bootstrap/file/functions</item>
                 <item name="dataProvider" xsi:type="object">Wwm\Blog\Cms\WordPress\Theme\Install\Bootstrap\File\Functions\FunctionsFileDataProvider</item>
                 <item name="destination" xsi:type="string">functions.php</item>
