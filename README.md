@@ -1,6 +1,8 @@
 # Free integration between Magento 2 and WordPress
 WWM Blog Magento 2 Extension by Walk with Magento
 
+![Overview slideshow](https://raw.githubusercontent.com/vdevx86/wwm-blog/doc/doc/images/main.gif "Overview slideshow")
+
 ## System Requirements
 
 * Magento: **v2.1.x** (or earlier)
