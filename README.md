@@ -5,13 +5,8 @@ WWM Blog Magento 2 Extension by Walk with Magento
 
 ## System Requirements
 
-* Magento: **v2.1.x** (or earlier)
-* WordPress: **v4.7.x** (or earlier)
-
-Both Magento 2 and WordPress have their own system requirements too (links are clickable):
-
-* [Magento 2](http://devdocs.magento.com/magento-system-requirements.html)
-* [WordPress](https://wordpress.org/about/requirements/)
+* [Magento 2](http://devdocs.magento.com/guides/v2.1/install-gde/system-requirements-tech.html): **>=2.1.x**
+* [WordPress](https://wordpress.org/about/requirements/): **>=4.7.x**
 
 At this moment these system requirements in some points are pretty similar (but, of course, not identical).
 You have to install WordPress in the same directory as where you have installed Magento 2.
