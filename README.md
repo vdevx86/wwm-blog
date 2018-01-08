@@ -18,7 +18,16 @@ WWM Blog Magento 2 Extension by Walk with Magento
 * login to the Magento 2 admin panel and go to: **Stores -> Configuration -> WWM -> WordPress Integration**.
 Change your settings and press "Save Settings";
 * install the WordPress theme by pressing the "Install Theme" button, - now it will be available from the WordPress admin panel;
-* go to the WordPress admin panel and [enable](https://codex.wordpress.org/Using_Themes) the WordPress "wwm" theme
+* go to the WordPress admin panel and [enable](https://codex.wordpress.org/Using_Themes) the WordPress "wwm" theme;
+* add the left sidebar to your blog pages. Go to: **Content -> Widgets**. Create a new widget using the following options:
+  * "Storefront Properties" tab:
+    * Type: "WWM Blog Sidebar";
+    * Layout Updates:
+      * Display on: "Specified page";
+      * Page: "WWM Blog";
+      * Container: "Sidebar Main";
+  * "Widget Options" tab:
+    * Sidebar ID: "sidebar-left"; WordPress "wwm" theme has its own built-in sidebar with the internal ID "sidebar-left". By entering correct WordPress sidebar ID here you will connect it with the newly created Magento 2 sidebar
 
 That's it!
 
