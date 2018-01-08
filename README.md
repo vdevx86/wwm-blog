@@ -11,9 +11,6 @@ WWM Blog Magento 2 Extension by Walk with Magento
 At this moment these system requirements in some points are pretty similar (but, of course, not identical).
 You have to install WordPress in the same directory as where you have installed Magento 2.
 
-## Linked resources
-* [A few screenshots](http://wwm-integrations.in.ua/screenshots.html) of integration for the basic Magento 2 Luma theme on this pretty tiny static [official website](http://wwm-integrations.in.ua/)
-
 ## How to Install and Configure
 
 Let's assume you have already installed Magento 2 and WordPress.
@@ -32,6 +29,7 @@ Go to the WordPress admin panel and enable the WordPress "wwm" theme. If you don
 
 That's it!
 
-## Contact Me
-
-Please don't hesitate to contact me. You can find me on [LinkedIn](https://www.linkedin.com/in/vdevx86/)
+## Linked resources
+* [LinkedIn](https://www.linkedin.com/in/vdevx86/) (my profile)
+* [Screenshots](http://wwm-integrations.in.ua/screenshots.html) (fullscreen): [Index](http://wwm-integrations.in.ua/i/index.png), [Single](http://wwm-integrations.in.ua/i/single.png), [Page](http://wwm-integrations.in.ua/i/page.png)
+* [Website](http://wwm-integrations.in.ua/)
