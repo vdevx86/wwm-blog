@@ -26,7 +26,7 @@ class File extends \Wwm\Blog\Cms\WordPress\Bootstrap\File
         \Wwm\Blog\Cms\WordPress\EntryPoint $entryPoint,
         \Magento\Framework\Filesystem\Directory\ReadFactory $readFactory,
         \Zend\Filter\Compress\Gz $gz,
-        \Magento\Framework\Encryption\Encryptor $encryptor,
+        \Wwm\Blog\Magento\Framework\Encryption\Encryptor $encryptor,
         $hash,
         $path,
         $source,

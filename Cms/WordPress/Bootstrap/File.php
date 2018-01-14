@@ -15,6 +15,8 @@
 
 namespace Wwm\Blog\Cms\WordPress\Bootstrap;
 
+use Wwm\Blog\Magento\Framework\Encryption\Encryptor;
+
 class File extends \Zend\Serializer\Adapter\PhpCode implements FileInterface
 {
     
@@ -34,7 +36,7 @@ class File extends \Zend\Serializer\Adapter\PhpCode implements FileInterface
         \Wwm\Blog\Cms\WordPress\EntryPoint $entryPoint,
         \Magento\Framework\Filesystem\Directory\ReadFactory $readFactory,
         \Zend\Filter\Compress\Gz $gz,
-        \Magento\Framework\Encryption\Encryptor $encryptor,
+        Encryptor $encryptor,
         $hash,
         $path,
         $source,
@@ -91,7 +93,7 @@ class File extends \Zend\Serializer\Adapter\PhpCode implements FileInterface
         $directoryRead = $this->readFactory->create($this->path);
         
         $contents = $directoryRead->readFile($this->source);
-        $contents = implode(self::ENC_DMTR, [
+        $contents = implode(Encryptor::DELIMITER, [
             self::ENC_PRM1,
             self::ENC_PRM2,
             $this->hash,

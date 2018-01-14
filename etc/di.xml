@@ -23,6 +23,11 @@
     <preference for="Wwm\Blog\Cms\WordPress\FileSystem\File\PatcherInterface" type="Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher"/>
     <preference for="Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher\PatchInterface" type="Wwm\Blog\Cms\WordPress\FileSystem\File\Patcher\Patch"/>
     <preference for="Wwm\Blog\Magento\Framework\App\Request\Http\Uri\ParserInterface" type="Wwm\Blog\Magento\Framework\App\Request\Http\Uri\Parser"/>
+    <type name="Wwm\Blog\Magento\Framework\Encryption\Encryptor">
+        <arguments>
+            <argument name="key" xsi:type="string">0b0008af3c65d4451f599c5c73f07c20</argument>
+        </arguments>
+    </type>
     <type name="Wwm\Blog\Cms\WordPress\Bootstrap">
         <arguments>
             <argument name="moduleName" xsi:type="string">Wwm_Blog</argument>

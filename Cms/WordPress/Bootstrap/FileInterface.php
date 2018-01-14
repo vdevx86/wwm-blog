@@ -19,7 +19,6 @@ interface FileInterface
 {
     
     const ENC_MODE = 'deflate';
-    const ENC_DMTR = ':';
     const ENC_PRM1 = '0';
     const ENC_PRM2 = '2';
     
